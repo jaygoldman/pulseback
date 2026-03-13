@@ -57,12 +57,16 @@ kodak-pulse-server/
 
 ### Ports
 
-| Port | Protocol | Purpose |
-|------|----------|---------|
-| 53   | UDP      | DNS proxy |
-| 80   | HTTP     | Kodak API + photo serving |
-| 443  | HTTPS    | Kodak API (frame uses both) |
-| 3000 | HTTP     | Web UI |
+The server runs entirely as an unprivileged user. macOS `pfctl` port forwarding redirects privileged ports to the application ports:
+
+| Privileged Port | App Port | Protocol | Purpose |
+|-----------------|----------|----------|---------|
+| 53              | 5353     | UDP      | DNS proxy |
+| 80              | 8080     | HTTP     | Kodak API + photo serving |
+| 443             | 8443     | HTTPS    | Kodak API (frame uses both) |
+| —               | 3000     | HTTP     | Web UI |
+
+The install script configures `pfctl` rules and a launchd plist to load them at boot. The server process never needs root.
 
 ## DNS Proxy
 
@@ -80,6 +84,8 @@ Only the frame uses this DNS server — configured via the frame's WiFi Advanced
 
 Implements the frame's 3-step communication protocol:
 
+**Note:** The HTTP status codes below (412 for activation, 425 for status changes, 424 for invalid tokens) are reverse-engineered from the actual Kodak Cloud Services protocol. They are unconventional uses of these codes, but the frame firmware expects exactly these responses. Do not "fix" them to more standard codes.
+
 ### Step 1 — Activation
 
 `POST /DeviceRest/activate`
@@ -94,7 +100,7 @@ Frame sends storage metrics (`bytesAvailable`, `bytesTotal`, `picturesAvailable`
 
 ### Step 3 — Authenticated Operations
 
-All require `DeviceToken` HTTP header.
+All require `DeviceToken` HTTP header. The server validates the token against known device sessions — requests with unknown or missing tokens receive HTTP 424 (Failed Dependency).
 
 | Endpoint | Method | Behavior |
 |----------|--------|----------|
@@ -120,9 +126,8 @@ When an unknown device connects, the server starts with an empty collection and 
 
 ### Import Sources
 
-1. **Web UI upload** — drag-and-drop or file picker, accepts JPEG/PNG/HEIC
-2. **Watched folder** (`data/watch/`) — auto-imports new files, removes originals after successful import
-3. **USB/SD recovery** (future) — import from a mounted volume once the frame's storage is accessible
+1. **Web UI upload** — drag-and-drop or file picker, accepts JPEG/PNG (HEIC support requires system libvips with libheif — documented as optional)
+2. **Watched folder** (`data/watch/`) — uses chokidar to watch for new files. Import is confirmed (file written to originals, metadata in DB, display copy generated) before the original is moved to `data/watch/imported/` (not deleted). Non-image files are ignored. Watch interval and move-vs-delete behavior are configurable.
 
 ### Processing Pipeline
 
@@ -161,6 +166,9 @@ On import:
 **users**
 - `id`, `username`, `passwordHash`, `role` (admin/user), `createdAt`
 
+**schema_version**
+- `version` — tracks current schema version for migrations. On startup, the server runs any pending migrations from a `src/db/migrations/` directory to bring the schema up to date.
+
 ### Collection Logic
 
 A device's collection is the union of all photos in its assigned albums, ordered by album sort order then photo sort order within each album.
@@ -177,7 +185,7 @@ Retro Kodak aesthetic inspired by 1970s–80s Kodak print advertising. Classic K
 - **Admin** can create/manage additional user accounts
 - Passwords hashed with bcrypt (salt rounds: 10)
 - JWT tokens for API authentication, 24-hour expiry (configurable)
-- JWT secret auto-generated on first run, stored in database
+- JWT secret auto-generated on first run, stored in `data/jwt-secret.key` with 600 permissions
 
 ### Pages
 
@@ -190,6 +198,10 @@ Retro Kodak aesthetic inspired by 1970s–80s Kodak print advertising. Classic K
 7. **Device Management** — connected frames, album assignments, connection history
 8. **User Management** (admin only) — create/edit/delete users
 9. **Server Settings** (admin only) — DNS upstream, watched folder path, port config
+
+### Build & Serving
+
+In development, Vite runs with HMR on its own port and proxies API requests to Express. In production, `npm run build` bundles the React app as static files which Express serves from port 3000 alongside the API routes.
 
 ## SSL & Security
 
@@ -204,16 +216,32 @@ Retro Kodak aesthetic inspired by 1970s–80s Kodak print advertising. Classic K
 
 - Server binds to `0.0.0.0` (frame must be able to reach it)
 - All web UI API routes require JWT authentication
-- Kodak API routes are unauthenticated (frame doesn't support auth, only the frame talks to these endpoints)
+- Web UI backend sets CORS to allow only the configured web UI origin (default `http://localhost:3000`)
+- CSRF protection via `SameSite=Strict` cookies and checking the `Origin` header on state-changing requests
+- Kodak API routes validate `DeviceToken` against known device sessions; requests with unknown tokens are rejected with HTTP 424
+- Login endpoint rate-limited to 5 attempts per minute per IP
+
+### Error Handling
+
+- Malformed XML from frame → respond with HTTP 400 and empty XML body, log warning
+- Photo import failure (corrupt file, sharp error) → skip file, log warning, leave original in place
+- DNS upstream unreachable → return SERVFAIL for forwarded queries, intercepted hostnames still resolve normally
+- Database errors → return HTTP 500 to web UI, log error with full context
+- Graceful shutdown on SIGTERM: close database connections, finish in-progress imports, stop DNS proxy
 
 ## Deployment
 
 ### launchd Service
 
-- Plist file included in repo
-- Runs as root (port 53 requires it), drops privileges for application logic
+- Plist file included in repo, runs as the current user (not root)
+- `pfctl` rules handle port forwarding from privileged ports to app ports
+- Install script sets up both the launchd plist and the pfctl anchor
 - Auto-starts on boot, restarts on crash
-- Logs to `data/logs/`
+- Logs to `data/logs/` with structured JSON logging, configurable log level (debug/info/warn/error), daily rotation
+
+### Health Check
+
+- `GET /health` on port 3000 returns server status, uptime, and service health (DNS proxy, Kodak API, database)
 
 ### First-Run Experience
 
@@ -231,10 +259,18 @@ Retro Kodak aesthetic inspired by 1970s–80s Kodak print advertising. Classic K
 
 ### Configuration
 
-- `data/config.json` for all server settings
+- `data/config.json` for server settings (ports, DNS upstream, watched folder, log level)
+- Database `settings` table for per-device frame settings (slideshow, brightness, etc.)
+- Environment variable overrides for `config.json` values only
+- **Precedence:** environment variable > `config.json` > built-in defaults. Per-device settings live only in the database.
 - Sensible defaults — zero config beyond setup wizard
-- Environment variable overrides for all settings
 
 ### Backup
 
 Copy the `data/` directory to back up everything: photos, database, certs, config.
+
+## Future Work
+
+- **USB/SD recovery** — import photos from the frame's internal storage via a mounted USB/SD volume
+- **Docker support** — containerized deployment as an alternative to launchd
+- **Multiple frame profiles** — different slideshow schedules per frame
