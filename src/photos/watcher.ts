@@ -1,4 +1,4 @@
-import chokidar from "chokidar";
+import chokidar, { type FSWatcher } from "chokidar";
 import { basename, extname, join } from "node:path";
 import { renameSync } from "node:fs";
 import { importPhoto } from "./import.js";
@@ -6,7 +6,7 @@ import { logger } from "../logger.js";
 
 const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".heic"]);
 
-let watcher: chokidar.FSWatcher | null = null;
+let watcher: FSWatcher | null = null;
 
 export function startWatcher(watchDir: string, dataDir: string): void {
   const importedDir = join(watchDir, "imported");

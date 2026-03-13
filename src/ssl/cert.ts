@@ -26,7 +26,7 @@ export async function ensureSslCert(dataDir: string): Promise<SslCert> {
   const pems = await generate(attrs, {
     days: 3650,
     keySize: 2048,
-  });
+  } as any);
 
   writeFileSync(keyPath, pems.private, { mode: 0o600 });
   writeFileSync(certPath, pems.cert, { mode: 0o644 });
