@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../api";
-import {
-  colors,
-  fonts,
-  cardStyle,
-  buttonStyle,
-  inputStyle,
-  labelStyle,
-} from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface Device {
   id: string;
@@ -28,37 +21,11 @@ interface DeviceSettings {
   language: string;
 }
 
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-  letterSpacing: "0.5px",
-};
-
-const fieldGroupStyle: React.CSSProperties = {
-  marginBottom: "20px",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  cursor: "pointer",
-};
-
-const rangeContainerStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "12px",
-};
-
 export function FrameSettings() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const [devices, setDevices] = useState<Device[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>("");
   const [settings, setSettings] = useState<DeviceSettings | null>(null);
@@ -118,10 +85,40 @@ export function FrameSettings() {
     setSettings((prev) => (prev ? { ...prev, [key]: value } : prev));
   }
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+    letterSpacing: "0.5px",
+  };
+
+  const fieldGroupStyle: React.CSSProperties = {
+    marginBottom: "20px",
+  };
+
+  const selectStyle: React.CSSProperties = {
+    ...s.input,
+    cursor: "pointer",
+  };
+
+  const rangeContainerStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  };
+
   if (loading) {
     return (
       <div style={pageStyle}>
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading…</div>
       </div>
     );
   }
@@ -129,13 +126,13 @@ export function FrameSettings() {
   return (
     <div style={pageStyle}>
       <h1 style={headingStyle}>Frame Settings</h1>
-      <p style={{ color: colors.mediumBrown, margin: "0 0 28px 0", fontSize: "14px" }}>
+      <p style={{ color: t.colors.textMuted, margin: "0 0 28px 0", fontSize: "14px" }}>
         Configure display and slideshow settings for your Kodak Pulse frame
       </p>
 
       {devices.length > 1 && (
         <div style={{ marginBottom: "24px" }}>
-          <label style={labelStyle}>Select Device</label>
+          <label style={s.label}>Select Device</label>
           <select
             style={selectStyle}
             value={selectedDeviceId}
@@ -152,23 +149,23 @@ export function FrameSettings() {
       )}
 
       {devices.length === 0 && (
-        <div style={{ ...cardStyle, color: colors.mediumBrown, fontStyle: "italic", textAlign: "center" }}>
+        <div style={{ ...s.card, color: t.colors.textMuted, fontStyle: "italic", textAlign: "center" }}>
           No devices registered yet
         </div>
       )}
 
       {selectedDeviceId && !settings && (
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading settings…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading settings…</div>
       )}
 
       {settings && (
         <form onSubmit={handleSave}>
-          <div style={{ ...cardStyle, maxWidth: "560px" }}>
+          <div style={{ ...s.card, maxWidth: "560px" }}>
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Slideshow Duration (seconds)</label>
+              <label style={s.label}>Slideshow Duration (seconds)</label>
               <input
                 type="number"
-                style={inputStyle}
+                style={s.input}
                 min={1}
                 max={3600}
                 value={settings.slideshowDuration}
@@ -177,7 +174,7 @@ export function FrameSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Transition Type</label>
+              <label style={s.label}>Transition Type</label>
               <select
                 style={selectStyle}
                 value={settings.transitionType}
@@ -190,7 +187,7 @@ export function FrameSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Display Mode</label>
+              <label style={s.label}>Display Mode</label>
               <select
                 style={selectStyle}
                 value={settings.displayMode}
@@ -202,26 +199,26 @@ export function FrameSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Brightness: {settings.brightness}%</label>
+              <label style={s.label}>Brightness: {settings.brightness}%</label>
               <div style={rangeContainerStyle}>
-                <span style={{ fontSize: "12px", color: colors.mediumBrown }}>0</span>
+                <span style={{ fontSize: "12px", color: t.colors.textMuted }}>0</span>
                 <input
                   type="range"
                   min={0}
                   max={100}
                   value={settings.brightness}
                   onChange={(e) => update("brightness", Number(e.target.value))}
-                  style={{ flex: 1, accentColor: colors.kodakRed, cursor: "pointer" }}
+                  style={{ flex: 1, accentColor: t.colors.primary, cursor: "pointer" }}
                 />
-                <span style={{ fontSize: "12px", color: colors.mediumBrown }}>100</span>
+                <span style={{ fontSize: "12px", color: t.colors.textMuted }}>100</span>
               </div>
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Timezone</label>
+              <label style={s.label}>Timezone</label>
               <input
                 type="text"
-                style={inputStyle}
+                style={s.input}
                 placeholder="e.g. America/New_York"
                 value={settings.timezone}
                 onChange={(e) => update("timezone", e.target.value)}
@@ -229,7 +226,7 @@ export function FrameSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Language</label>
+              <label style={s.label}>Language</label>
               <select
                 style={selectStyle}
                 value={settings.language}
@@ -247,11 +244,11 @@ export function FrameSettings() {
                 style={{
                   marginBottom: "16px",
                   padding: "10px 14px",
-                  borderRadius: "8px",
+                  borderRadius: t.borderRadius,
                   fontSize: "14px",
-                  background: message.type === "success" ? "rgba(74,124,89,0.1)" : "rgba(192,57,43,0.1)",
-                  color: message.type === "success" ? colors.success : colors.danger,
-                  border: `1px solid ${message.type === "success" ? colors.success : colors.danger}`,
+                  background: message.type === "success" ? `${t.colors.success}1A` : `${t.colors.danger}1A`,
+                  color: message.type === "success" ? t.colors.success : t.colors.danger,
+                  border: `1px solid ${message.type === "success" ? t.colors.success : t.colors.danger}`,
                 }}
               >
                 {message.text}
@@ -260,7 +257,7 @@ export function FrameSettings() {
 
             <button
               type="submit"
-              style={{ ...buttonStyle, opacity: saving ? 0.7 : 1 }}
+              style={{ ...s.button, opacity: saving ? 0.7 : 1 }}
               disabled={saving}
             >
               {saving ? "Saving…" : "Save Settings"}

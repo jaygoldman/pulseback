@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { api } from "../api";
-import { colors, fonts, cardStyle, buttonStyle, buttonSecondaryStyle } from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface Photo {
   id: string;
@@ -31,85 +31,11 @@ function idToRotation(id: string): number {
   return (norm / 999) * 4 - 2;
 }
 
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 24px 0",
-};
-
-const uploadZoneBase: React.CSSProperties = {
-  background: colors.warmCream,
-  border: `2px dashed ${colors.kodakGold}`,
-  borderRadius: "12px",
-  padding: "40px 24px",
-  textAlign: "center",
-  marginBottom: "28px",
-  transition: "background 0.2s, border-color 0.2s",
-  cursor: "pointer",
-};
-
-const toolbarStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "12px",
-  marginBottom: "20px",
-  flexWrap: "wrap" as const,
-};
-
-const gridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-  gap: "24px",
-};
-
-const polaroidOuter = (rotation: number): React.CSSProperties => ({
-  background: "white",
-  padding: "8px 8px 32px 8px",
-  boxShadow: `3px 3px 10px ${colors.shadowDark}, 0 1px 3px ${colors.shadow}`,
-  transform: `rotate(${rotation}deg)`,
-  position: "relative" as const,
-  cursor: "pointer",
-  transition: "transform 0.2s, box-shadow 0.2s",
-  userSelect: "none" as const,
-});
-
-const checkboxOverlayStyle: React.CSSProperties = {
-  position: "absolute",
-  top: "12px",
-  left: "12px",
-  width: "20px",
-  height: "20px",
-  accentColor: colors.kodakRed,
-  cursor: "pointer",
-  zIndex: 2,
-};
-
-const photoFilenameStyle: React.CSSProperties = {
-  fontSize: "10px",
-  color: colors.mediumBrown,
-  textAlign: "center" as const,
-  marginTop: "6px",
-  fontFamily: fonts.body,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap" as const,
-  padding: "0 2px",
-};
-
-const deleteButtonStyle: React.CSSProperties = {
-  ...buttonStyle,
-  background: colors.danger,
-};
-
 export function Photos() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
@@ -233,6 +159,85 @@ export function Photos() {
 
   const allSelected = photos.length > 0 && selected.size === photos.length;
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 24px 0",
+  };
+
+  const uploadZoneBase: React.CSSProperties = {
+    background: t.colors.background,
+    border: `2px dashed ${t.colors.accent}`,
+    borderRadius: t.cardBorderRadius,
+    padding: "40px 24px",
+    textAlign: "center",
+    marginBottom: "28px",
+    transition: "background 0.2s, border-color 0.2s",
+    cursor: "pointer",
+  };
+
+  const toolbarStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "20px",
+    flexWrap: "wrap" as const,
+  };
+
+  const gridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "24px",
+  };
+
+  const polaroidOuter = (rotation: number): React.CSSProperties => ({
+    background: "white",
+    padding: "8px 8px 32px 8px",
+    boxShadow: `3px 3px 10px ${t.colors.shadowDark}, 0 1px 3px ${t.colors.shadow}`,
+    transform: `rotate(${rotation}deg)`,
+    borderRadius: t.borderRadius,
+    position: "relative" as const,
+    cursor: "pointer",
+    transition: "transform 0.2s, box-shadow 0.2s",
+    userSelect: "none" as const,
+  });
+
+  const checkboxOverlayStyle: React.CSSProperties = {
+    position: "absolute",
+    top: "12px",
+    left: "12px",
+    width: "20px",
+    height: "20px",
+    accentColor: t.colors.primary,
+    cursor: "pointer",
+    zIndex: 2,
+  };
+
+  const photoFilenameStyle: React.CSSProperties = {
+    fontSize: "10px",
+    color: t.colors.textMuted,
+    textAlign: "center" as const,
+    marginTop: "6px",
+    fontFamily: t.fonts.body,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap" as const,
+    padding: "0 2px",
+  };
+
+  const deleteButtonStyle: React.CSSProperties = {
+    ...s.button,
+    background: t.colors.danger,
+  };
+
   return (
     <div style={pageStyle}>
       <h1 style={headingStyle}>Photos</h1>
@@ -241,8 +246,8 @@ export function Photos() {
       <div
         style={{
           ...uploadZoneBase,
-          background: dragOver ? "#FFF0C8" : colors.warmCream,
-          borderColor: dragOver ? colors.kodakRed : colors.kodakGold,
+          background: dragOver ? `${t.colors.secondary}33` : t.colors.background,
+          borderColor: dragOver ? t.colors.primary : t.colors.accent,
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -250,14 +255,14 @@ export function Photos() {
         onClick={() => fileInputRef.current?.click()}
       >
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>📷</div>
-        <div style={{ fontFamily: fonts.heading, fontSize: "18px", color: colors.darkBrown, marginBottom: "8px" }}>
+        <div style={{ fontFamily: t.fonts.heading, fontSize: "18px", color: t.colors.text, marginBottom: "8px" }}>
           {dragOver ? "Drop photos here" : "Drag & drop photos here"}
         </div>
-        <div style={{ color: colors.mediumBrown, fontSize: "13px", marginBottom: "16px" }}>
+        <div style={{ color: t.colors.textMuted, fontSize: "13px", marginBottom: "16px" }}>
           or
         </div>
         <button
-          style={{ ...buttonSecondaryStyle, pointerEvents: "none" }}
+          style={{ ...s.buttonSecondary, pointerEvents: "none" }}
           onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
         >
           {uploading ? "Uploading…" : "Choose Files"}
@@ -272,26 +277,26 @@ export function Photos() {
           onClick={e => e.stopPropagation()}
         />
         {uploading && (
-          <div style={{ color: colors.mediumBrown, marginTop: "12px", fontStyle: "italic" }}>
+          <div style={{ color: t.colors.textMuted, marginTop: "12px", fontStyle: "italic" }}>
             Uploading…
           </div>
         )}
         {uploadError && (
-          <div style={{ color: colors.danger, marginTop: "12px" }}>
+          <div style={{ color: t.colors.danger, marginTop: "12px" }}>
             {uploadError}
           </div>
         )}
       </div>
 
       {error && (
-        <div style={{ color: colors.danger, marginBottom: "16px" }}>Error: {error}</div>
+        <div style={{ color: t.colors.danger, marginBottom: "16px" }}>Error: {error}</div>
       )}
 
       {/* Toolbar */}
       {photos.length > 0 && (
         <div style={toolbarStyle}>
           <button
-            style={{ ...buttonSecondaryStyle, background: allSelected ? colors.lightBrown : colors.mediumBrown }}
+            style={{ ...s.buttonSecondary, background: allSelected ? t.colors.inputBorder : t.colors.textMuted }}
             onClick={toggleSelectAll}
           >
             {allSelected ? "Deselect All" : "Select All"}
@@ -299,7 +304,7 @@ export function Photos() {
 
           {selected.size > 0 && (
             <>
-              <span style={{ color: colors.mediumBrown, fontSize: "13px" }}>
+              <span style={{ color: t.colors.textMuted, fontSize: "13px" }}>
                 {selected.size} selected
               </span>
               <button style={deleteButtonStyle} onClick={deleteSelected}>
@@ -307,7 +312,7 @@ export function Photos() {
               </button>
               <div style={{ position: "relative" }}>
                 <button
-                  style={buttonSecondaryStyle}
+                  style={s.buttonSecondary}
                   onClick={openAlbumDropdown}
                 >
                   Add to Album ▾
@@ -318,10 +323,10 @@ export function Photos() {
                       position: "absolute",
                       top: "calc(100% + 4px)",
                       left: 0,
-                      background: colors.cardBg,
-                      border: `1px solid ${colors.inputBorder}`,
-                      borderRadius: "8px",
-                      boxShadow: `0 4px 12px ${colors.shadowDark}`,
+                      background: t.colors.cardBg,
+                      border: `1px solid ${t.colors.inputBorder}`,
+                      borderRadius: t.borderRadius,
+                      boxShadow: `0 4px 12px ${t.colors.shadowDark}`,
                       zIndex: 100,
                       minWidth: "200px",
                       overflow: "hidden",
@@ -332,20 +337,20 @@ export function Photos() {
                         padding: "8px 12px",
                         fontSize: "11px",
                         fontWeight: 600,
-                        color: colors.mediumBrown,
+                        color: t.colors.textMuted,
                         textTransform: "uppercase",
                         letterSpacing: "1px",
-                        borderBottom: `1px solid ${colors.inputBorder}`,
+                        borderBottom: `1px solid ${t.colors.inputBorder}`,
                       }}
                     >
                       Select Album
                     </div>
                     {albumsLoading ? (
-                      <div style={{ padding: "12px", color: colors.mediumBrown, fontStyle: "italic" }}>
+                      <div style={{ padding: "12px", color: t.colors.textMuted, fontStyle: "italic" }}>
                         Loading…
                       </div>
                     ) : albums.length === 0 ? (
-                      <div style={{ padding: "12px", color: colors.mediumBrown, fontStyle: "italic" }}>
+                      <div style={{ padding: "12px", color: t.colors.textMuted, fontStyle: "italic" }}>
                         No albums yet
                       </div>
                     ) : (
@@ -361,11 +366,11 @@ export function Photos() {
                             border: "none",
                             textAlign: "left",
                             cursor: "pointer",
-                            fontFamily: fonts.body,
+                            fontFamily: t.fonts.body,
                             fontSize: "14px",
-                            color: colors.darkBrown,
+                            color: t.colors.text,
                           }}
-                          onMouseEnter={e => (e.currentTarget.style.background = colors.warmCream)}
+                          onMouseEnter={e => (e.currentTarget.style.background = t.colors.background)}
                           onMouseLeave={e => (e.currentTarget.style.background = "none")}
                         >
                           {album.name}
@@ -380,12 +385,12 @@ export function Photos() {
                         padding: "8px 14px",
                         background: "none",
                         border: "none",
-                        borderTop: `1px solid ${colors.inputBorder}`,
+                        borderTop: `1px solid ${t.colors.inputBorder}`,
                         textAlign: "center",
                         cursor: "pointer",
-                        fontFamily: fonts.body,
+                        fontFamily: t.fonts.body,
                         fontSize: "12px",
-                        color: colors.mediumBrown,
+                        color: t.colors.textMuted,
                       }}
                     >
                       Cancel
@@ -400,13 +405,13 @@ export function Photos() {
 
       {/* Photo grid */}
       {loading ? (
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading photos…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading photos…</div>
       ) : photos.length === 0 ? (
         <div
           style={{
-            ...cardStyle,
+            ...s.card,
             textAlign: "center",
-            color: colors.mediumBrown,
+            color: t.colors.textMuted,
             fontStyle: "italic",
             padding: "48px",
           }}
@@ -424,8 +429,8 @@ export function Photos() {
                 style={{
                   ...polaroidOuter(rotation),
                   boxShadow: isSelected
-                    ? `0 0 0 3px ${colors.kodakRed}, 3px 3px 10px ${colors.shadowDark}`
-                    : `3px 3px 10px ${colors.shadowDark}, 0 1px 3px ${colors.shadow}`,
+                    ? `0 0 0 3px ${t.colors.primary}, 3px 3px 10px ${t.colors.shadowDark}`
+                    : `3px 3px 10px ${t.colors.shadowDark}, 0 1px 3px ${t.colors.shadow}`,
                 }}
                 onClick={() => toggleSelect(photo.id)}
               >
@@ -445,7 +450,7 @@ export function Photos() {
                     aspectRatio: "1",
                     objectFit: "cover",
                     display: "block",
-                    background: colors.warmCream,
+                    background: t.colors.background,
                   }}
                   loading="lazy"
                 />

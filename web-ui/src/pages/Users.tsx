@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api, getUser } from "../api";
-import {
-  colors,
-  fonts,
-  cardStyle,
-  buttonStyle,
-  buttonSecondaryStyle,
-  inputStyle,
-  labelStyle,
-} from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface User {
   id: string;
@@ -17,68 +9,11 @@ interface User {
   createdAt: string;
 }
 
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-  letterSpacing: "0.5px",
-};
-
-const tableStyle: React.CSSProperties = {
-  width: "100%",
-  borderCollapse: "collapse" as const,
-  fontSize: "14px",
-};
-
-const thStyle: React.CSSProperties = {
-  textAlign: "left" as const,
-  padding: "10px 14px",
-  fontFamily: fonts.body,
-  fontSize: "12px",
-  fontWeight: 700,
-  color: colors.mediumBrown,
-  textTransform: "uppercase" as const,
-  letterSpacing: "0.8px",
-  borderBottom: `2px solid ${colors.inputBorder}`,
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: "12px 14px",
-  borderBottom: `1px solid ${colors.inputBorder}`,
-  color: colors.darkBrown,
-  verticalAlign: "middle" as const,
-};
-
-const roleBadgeStyle = (role: string): React.CSSProperties => ({
-  display: "inline-block",
-  padding: "2px 10px",
-  borderRadius: "20px",
-  fontSize: "11px",
-  fontWeight: 700,
-  letterSpacing: "0.5px",
-  textTransform: "uppercase" as const,
-  background: role === "admin" ? "rgba(227,24,55,0.1)" : "rgba(107,66,38,0.1)",
-  color: role === "admin" ? colors.kodakRed : colors.mediumBrown,
-});
-
-const fieldGroupStyle: React.CSSProperties = {
-  marginBottom: "16px",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  cursor: "pointer",
-};
-
 export function Users() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const currentUser = getUser();
   const isAdmin = currentUser?.role === "admin";
 
@@ -154,14 +89,75 @@ export function Users() {
     }
   }
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+    letterSpacing: "0.5px",
+  };
+
+  const tableStyle: React.CSSProperties = {
+    width: "100%",
+    borderCollapse: "collapse" as const,
+    fontSize: "14px",
+  };
+
+  const thStyle: React.CSSProperties = {
+    textAlign: "left" as const,
+    padding: "10px 14px",
+    fontFamily: t.fonts.body,
+    fontSize: "12px",
+    fontWeight: 700,
+    color: t.colors.textMuted,
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.8px",
+    borderBottom: `2px solid ${t.colors.inputBorder}`,
+  };
+
+  const tdStyle: React.CSSProperties = {
+    padding: "12px 14px",
+    borderBottom: `1px solid ${t.colors.inputBorder}`,
+    color: t.colors.text,
+    verticalAlign: "middle" as const,
+  };
+
+  const roleBadgeStyle = (role: string): React.CSSProperties => ({
+    display: "inline-block",
+    padding: "2px 10px",
+    borderRadius: "20px",
+    fontSize: "11px",
+    fontWeight: 700,
+    letterSpacing: "0.5px",
+    textTransform: "uppercase" as const,
+    background: role === "admin" ? `${t.colors.primary}1A` : `${t.colors.textMuted}1A`,
+    color: role === "admin" ? t.colors.primary : t.colors.textMuted,
+  });
+
+  const fieldGroupStyle: React.CSSProperties = {
+    marginBottom: "16px",
+  };
+
+  const selectStyle: React.CSSProperties = {
+    ...s.input,
+    cursor: "pointer",
+  };
+
   if (!isAdmin) {
     return (
       <div style={pageStyle}>
         <h1 style={headingStyle}>Users</h1>
         <div
           style={{
-            ...cardStyle,
-            color: colors.danger,
+            ...s.card,
+            color: t.colors.danger,
             textAlign: "center",
             marginTop: "20px",
           }}
@@ -177,28 +173,28 @@ export function Users() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
         <h1 style={{ ...headingStyle, margin: 0 }}>Users</h1>
         <button
-          style={buttonStyle}
+          style={s.button}
           onClick={() => { setShowAddForm((v) => !v); setAddError(null); }}
         >
           {showAddForm ? "Cancel" : "+ Add User"}
         </button>
       </div>
-      <p style={{ color: colors.mediumBrown, margin: "0 0 24px 0", fontSize: "14px" }}>
+      <p style={{ color: t.colors.textMuted, margin: "0 0 24px 0", fontSize: "14px" }}>
         Manage who has access to Pulseback
       </p>
 
       {/* Add user form */}
       {showAddForm && (
-        <div style={{ ...cardStyle, maxWidth: "480px", marginBottom: "24px" }}>
-          <div style={{ fontFamily: fonts.heading, fontSize: "16px", fontWeight: 600, color: colors.darkBrown, marginBottom: "16px" }}>
+        <div style={{ ...s.card, maxWidth: "480px", marginBottom: "24px" }}>
+          <div style={{ fontFamily: t.fonts.heading, fontSize: "16px", fontWeight: 600, color: t.colors.text, marginBottom: "16px" }}>
             New User
           </div>
           <form onSubmit={handleAddUser}>
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Username</label>
+              <label style={s.label}>Username</label>
               <input
                 type="text"
-                style={inputStyle}
+                style={s.input}
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
                 autoComplete="off"
@@ -206,10 +202,10 @@ export function Users() {
               />
             </div>
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Password</label>
+              <label style={s.label}>Password</label>
               <input
                 type="password"
-                style={inputStyle}
+                style={s.input}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
@@ -217,7 +213,7 @@ export function Users() {
               />
             </div>
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Role</label>
+              <label style={s.label}>Role</label>
               <select
                 style={selectStyle}
                 value={newRole}
@@ -228,19 +224,19 @@ export function Users() {
               </select>
             </div>
             {addError && (
-              <div style={{ color: colors.danger, fontSize: "13px", marginBottom: "12px" }}>{addError}</div>
+              <div style={{ color: t.colors.danger, fontSize: "13px", marginBottom: "12px" }}>{addError}</div>
             )}
             <div style={{ display: "flex", gap: "10px" }}>
               <button
                 type="submit"
-                style={{ ...buttonStyle, opacity: addLoading ? 0.7 : 1 }}
+                style={{ ...s.button, opacity: addLoading ? 0.7 : 1 }}
                 disabled={addLoading}
               >
                 {addLoading ? "Creating…" : "Create User"}
               </button>
               <button
                 type="button"
-                style={buttonSecondaryStyle}
+                style={s.buttonSecondary}
                 onClick={() => { setShowAddForm(false); setAddError(null); }}
               >
                 Cancel
@@ -255,11 +251,11 @@ export function Users() {
           style={{
             marginBottom: "16px",
             padding: "10px 14px",
-            borderRadius: "8px",
+            borderRadius: t.borderRadius,
             fontSize: "14px",
-            background: globalMessage.type === "success" ? "rgba(74,124,89,0.1)" : "rgba(192,57,43,0.1)",
-            color: globalMessage.type === "success" ? colors.success : colors.danger,
-            border: `1px solid ${globalMessage.type === "success" ? colors.success : colors.danger}`,
+            background: globalMessage.type === "success" ? `${t.colors.success}1A` : `${t.colors.danger}1A`,
+            color: globalMessage.type === "success" ? t.colors.success : t.colors.danger,
+            border: `1px solid ${globalMessage.type === "success" ? t.colors.success : t.colors.danger}`,
           }}
         >
           {globalMessage.text}
@@ -267,15 +263,15 @@ export function Users() {
       )}
 
       {deleteError && (
-        <div style={{ color: colors.danger, marginBottom: "12px", fontSize: "13px" }}>{deleteError}</div>
+        <div style={{ color: t.colors.danger, marginBottom: "12px", fontSize: "13px" }}>{deleteError}</div>
       )}
 
-      <div style={cardStyle}>
+      <div style={s.card}>
         {loading && (
-          <div style={{ color: colors.mediumBrown, fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
+          <div style={{ color: t.colors.textMuted, fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
         )}
         {error && (
-          <div style={{ color: colors.danger }}>{error}</div>
+          <div style={{ color: t.colors.danger }}>{error}</div>
         )}
         {!loading && !error && (
           <table style={tableStyle}>
@@ -289,36 +285,36 @@ export function Users() {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} style={{ background: user.id === currentUser?.id ? "rgba(227,24,55,0.03)" : "transparent" }}>
+                <tr key={user.id} style={{ background: user.id === currentUser?.id ? `${t.colors.primary}08` : "transparent" }}>
                   <td style={tdStyle}>
                     <span style={{ fontWeight: user.id === currentUser?.id ? 700 : 400 }}>
                       {user.username}
                     </span>
                     {user.id === currentUser?.id && (
-                      <span style={{ marginLeft: "8px", fontSize: "11px", color: colors.mediumBrown }}>(you)</span>
+                      <span style={{ marginLeft: "8px", fontSize: "11px", color: t.colors.textMuted }}>(you)</span>
                     )}
                   </td>
                   <td style={tdStyle}>
                     <span style={roleBadgeStyle(user.role)}>{user.role}</span>
                   </td>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: "13px", color: colors.mediumBrown }}>
+                    <span style={{ fontSize: "13px", color: t.colors.textMuted }}>
                       {new Date(user.createdAt).toLocaleDateString()}
                     </span>
                   </td>
                   <td style={tdStyle}>
                     {deleteConfirmId === user.id ? (
                       <span style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}>
-                        <span style={{ fontSize: "12px", color: colors.danger }}>Confirm delete?</span>
+                        <span style={{ fontSize: "12px", color: t.colors.danger }}>Confirm delete?</span>
                         <button
-                          style={{ ...buttonStyle, background: colors.danger, padding: "5px 10px", fontSize: "12px", opacity: deletingId === user.id ? 0.7 : 1 }}
+                          style={{ ...s.button, background: t.colors.danger, padding: "5px 10px", fontSize: "12px", opacity: deletingId === user.id ? 0.7 : 1 }}
                           onClick={() => handleDelete(user.id)}
                           disabled={deletingId === user.id}
                         >
                           {deletingId === user.id ? "Deleting…" : "Yes, delete"}
                         </button>
                         <button
-                          style={{ ...buttonSecondaryStyle, padding: "5px 10px", fontSize: "12px" }}
+                          style={{ ...s.buttonSecondary, padding: "5px 10px", fontSize: "12px" }}
                           onClick={() => setDeleteConfirmId(null)}
                         >
                           Cancel
@@ -328,14 +324,14 @@ export function Users() {
                       <button
                         style={{
                           background: "none",
-                          border: `1px solid ${colors.danger}`,
-                          color: colors.danger,
-                          borderRadius: "6px",
+                          border: `1px solid ${t.colors.danger}`,
+                          color: t.colors.danger,
+                          borderRadius: t.borderRadius,
                           padding: "5px 12px",
                           fontSize: "12px",
                           cursor: user.id === currentUser?.id ? "not-allowed" : "pointer",
                           opacity: user.id === currentUser?.id ? 0.4 : 1,
-                          fontFamily: fonts.body,
+                          fontFamily: t.fonts.body,
                           fontWeight: 600,
                         }}
                         onClick={() => {
@@ -355,7 +351,7 @@ export function Users() {
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={4} style={{ ...tdStyle, textAlign: "center", color: colors.mediumBrown, fontStyle: "italic" }}>
+                  <td colSpan={4} style={{ ...tdStyle, textAlign: "center", color: t.colors.textMuted, fontStyle: "italic" }}>
                     No users found
                   </td>
                 </tr>

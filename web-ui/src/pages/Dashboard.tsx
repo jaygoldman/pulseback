@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../api";
-import { colors, fonts, cardStyle } from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface Photo {
   id: string;
@@ -63,124 +63,11 @@ function formatUptime(seconds: number): string {
   return `${s}s`;
 }
 
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-  letterSpacing: "0.5px",
-};
-
-const subheadingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "18px",
-  fontWeight: 600,
-  color: colors.mediumBrown,
-  margin: "32px 0 12px 0",
-};
-
-const statRowStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-  gap: "16px",
-  marginBottom: "8px",
-};
-
-const statCardStyle: React.CSSProperties = {
-  ...cardStyle,
-  textAlign: "center" as const,
-  padding: "20px",
-};
-
-const statLabelStyle: React.CSSProperties = {
-  fontSize: "12px",
-  fontWeight: 600,
-  color: colors.mediumBrown,
-  textTransform: "uppercase" as const,
-  letterSpacing: "1px",
-  marginBottom: "8px",
-};
-
-const statValueStyle: React.CSSProperties = {
-  fontSize: "36px",
-  fontWeight: 700,
-  fontFamily: fonts.heading,
-  color: colors.darkBrown,
-  lineHeight: 1,
-};
-
-const deviceGridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-  gap: "16px",
-};
-
-const badgeStyle = (online: boolean): React.CSSProperties => ({
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "6px",
-  fontSize: "12px",
-  fontWeight: 600,
-  color: online ? colors.success : colors.mediumBrown,
-  background: online ? "rgba(74,124,89,0.1)" : "rgba(107,66,38,0.1)",
-  borderRadius: "20px",
-  padding: "3px 10px",
-  marginBottom: "12px",
-});
-
-const dotStyle = (online: boolean): React.CSSProperties => ({
-  width: "8px",
-  height: "8px",
-  borderRadius: "50%",
-  background: online ? colors.success : "#AAA",
-  flexShrink: 0,
-});
-
-const deviceMetaStyle: React.CSSProperties = {
-  fontSize: "12px",
-  color: colors.mediumBrown,
-  margin: "4px 0",
-};
-
-const storageBarOuter: React.CSSProperties = {
-  marginTop: "12px",
-  background: "rgba(0,0,0,0.08)",
-  borderRadius: "4px",
-  height: "8px",
-  overflow: "hidden",
-};
-
-function StorageBar({ used, total }: { used: number; total: number }) {
-  const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: colors.mediumBrown, marginBottom: "4px" }}>
-        <span>{formatBytes(used)} used</span>
-        <span>{formatBytes(total)} total</span>
-      </div>
-      <div style={storageBarOuter}>
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            background: pct > 80 ? colors.danger : pct > 60 ? colors.warning : colors.success,
-            borderRadius: "4px",
-            transition: "width 0.3s",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function Dashboard() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
@@ -212,18 +99,135 @@ export function Dashboard() {
 
   const healthOk = health?.status === "ok";
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+    letterSpacing: "0.5px",
+  };
+
+  const subheadingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "18px",
+    fontWeight: 600,
+    color: t.colors.textMuted,
+    margin: "32px 0 12px 0",
+  };
+
+  const statRowStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "16px",
+    marginBottom: "8px",
+  };
+
+  const statCardStyle: React.CSSProperties = {
+    ...s.card,
+    textAlign: "center" as const,
+    padding: "20px",
+  };
+
+  const statLabelStyle: React.CSSProperties = {
+    fontSize: "12px",
+    fontWeight: 600,
+    color: t.colors.textMuted,
+    textTransform: "uppercase" as const,
+    letterSpacing: "1px",
+    marginBottom: "8px",
+  };
+
+  const statValueStyle: React.CSSProperties = {
+    fontSize: "36px",
+    fontWeight: 700,
+    fontFamily: t.fonts.heading,
+    color: t.colors.text,
+    lineHeight: 1,
+  };
+
+  const deviceGridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+    gap: "16px",
+  };
+
+  const badgeStyle = (online: boolean): React.CSSProperties => ({
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    fontSize: "12px",
+    fontWeight: 600,
+    color: online ? t.colors.success : t.colors.textMuted,
+    background: online ? `${t.colors.success}1A` : `${t.colors.textMuted}1A`,
+    borderRadius: "20px",
+    padding: "3px 10px",
+    marginBottom: "12px",
+  });
+
+  const dotStyle = (online: boolean): React.CSSProperties => ({
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: online ? t.colors.success : "#AAA",
+    flexShrink: 0,
+  });
+
+  const deviceMetaStyle: React.CSSProperties = {
+    fontSize: "12px",
+    color: t.colors.textMuted,
+    margin: "4px 0",
+  };
+
+  const storageBarOuter: React.CSSProperties = {
+    marginTop: "12px",
+    background: "rgba(0,0,0,0.08)",
+    borderRadius: t.borderRadius,
+    height: "8px",
+    overflow: "hidden",
+  };
+
+  function StorageBar({ used, total }: { used: number; total: number }) {
+    const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
+    return (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: t.colors.textMuted, marginBottom: "4px" }}>
+          <span>{formatBytes(used)} used</span>
+          <span>{formatBytes(total)} total</span>
+        </div>
+        <div style={storageBarOuter}>
+          <div
+            style={{
+              height: "100%",
+              width: `${pct}%`,
+              background: pct > 80 ? t.colors.danger : pct > 60 ? t.colors.warning : t.colors.success,
+              borderRadius: t.borderRadius,
+              transition: "width 0.3s",
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={pageStyle}>
       <h1 style={headingStyle}>Dashboard</h1>
-      <p style={{ color: colors.mediumBrown, margin: "0 0 28px 0", fontSize: "14px" }}>
+      <p style={{ color: t.colors.textMuted, margin: "0 0 28px 0", fontSize: "14px" }}>
         Pulseback overview
       </p>
 
       {loading && (
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading…</div>
       )}
       {error && (
-        <div style={{ color: colors.danger, marginBottom: "16px" }}>Error: {error}</div>
+        <div style={{ color: t.colors.danger, marginBottom: "16px" }}>Error: {error}</div>
       )}
 
       {!loading && (
@@ -243,11 +247,11 @@ export function Dashboard() {
               <div style={{ ...statValueStyle, fontSize: "20px", paddingTop: "8px" }}>
                 <span
                   style={{
-                    color: healthOk ? colors.success : colors.danger,
-                    background: healthOk ? "rgba(74,124,89,0.1)" : "rgba(192,57,43,0.1)",
-                    borderRadius: "8px",
+                    color: healthOk ? t.colors.success : t.colors.danger,
+                    background: healthOk ? `${t.colors.success}1A` : `${t.colors.danger}1A`,
+                    borderRadius: t.borderRadius,
                     padding: "4px 14px",
-                    fontFamily: fonts.body,
+                    fontFamily: t.fonts.body,
                     fontWeight: 700,
                     fontSize: "14px",
                     display: "inline-block",
@@ -259,7 +263,7 @@ export function Dashboard() {
                 </span>
               </div>
               {health && (
-                <div style={{ fontSize: "11px", color: colors.mediumBrown, marginTop: "8px" }}>
+                <div style={{ fontSize: "11px", color: t.colors.textMuted, marginTop: "8px" }}>
                   Uptime: {formatUptime(health.uptime)}
                 </div>
               )}
@@ -267,7 +271,7 @@ export function Dashboard() {
             <div style={statCardStyle}>
               <div style={statLabelStyle}>Devices</div>
               <div style={statValueStyle}>{devices.length}</div>
-              <div style={{ fontSize: "12px", color: colors.success, marginTop: "4px" }}>
+              <div style={{ fontSize: "12px", color: t.colors.success, marginTop: "4px" }}>
                 {devices.filter(d => isOnline(d.lastSeen)).length} online
               </div>
             </div>
@@ -276,7 +280,7 @@ export function Dashboard() {
           {/* Device cards */}
           <h2 style={subheadingStyle}>Devices</h2>
           {devices.length === 0 ? (
-            <div style={{ ...cardStyle, color: colors.mediumBrown, fontStyle: "italic", textAlign: "center" }}>
+            <div style={{ ...s.card, color: t.colors.textMuted, fontStyle: "italic", textAlign: "center" }}>
               No devices registered yet
             </div>
           ) : (
@@ -284,9 +288,9 @@ export function Dashboard() {
               {devices.map(device => {
                 const online = isOnline(device.lastSeen);
                 return (
-                  <div key={device.id} style={{ ...cardStyle, padding: "20px" }}>
+                  <div key={device.id} style={{ ...s.card, padding: "20px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "4px" }}>
-                      <div style={{ fontFamily: fonts.heading, fontSize: "16px", fontWeight: 600, color: colors.darkBrown }}>
+                      <div style={{ fontFamily: t.fonts.heading, fontSize: "16px", fontWeight: 600, color: t.colors.text }}>
                         {device.name || "Unnamed Device"}
                       </div>
                     </div>

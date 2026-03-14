@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../api";
-import {
-  colors,
-  fonts,
-  cardStyle,
-  buttonStyle,
-  inputStyle,
-  labelStyle,
-} from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface ServerConfig {
   dnsUpstream?: string;
@@ -17,41 +10,11 @@ interface ServerConfig {
   [key: string]: unknown;
 }
 
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-  letterSpacing: "0.5px",
-};
-
-const fieldGroupStyle: React.CSSProperties = {
-  marginBottom: "20px",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  cursor: "pointer",
-};
-
-const noteStyle: React.CSSProperties = {
-  marginTop: "16px",
-  padding: "10px 14px",
-  borderRadius: "8px",
-  fontSize: "13px",
-  background: "rgba(212,160,23,0.1)",
-  color: colors.lightBrown,
-  border: `1px solid ${colors.kodakGold}`,
-};
-
 export function ServerSettings() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const [config, setConfig] = useState<ServerConfig>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -87,25 +50,59 @@ export function ServerSettings() {
     setConfig((prev) => ({ ...prev, [key]: value }));
   }
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+    letterSpacing: "0.5px",
+  };
+
+  const fieldGroupStyle: React.CSSProperties = {
+    marginBottom: "20px",
+  };
+
+  const selectStyle: React.CSSProperties = {
+    ...s.input,
+    cursor: "pointer",
+  };
+
+  const noteStyle: React.CSSProperties = {
+    marginTop: "16px",
+    padding: "10px 14px",
+    borderRadius: t.borderRadius,
+    fontSize: "13px",
+    background: `${t.colors.warning}1A`,
+    color: t.colors.warning,
+    border: `1px solid ${t.colors.warning}`,
+  };
+
   return (
     <div style={pageStyle}>
       <h1 style={headingStyle}>Server Settings</h1>
-      <p style={{ color: colors.mediumBrown, margin: "0 0 28px 0", fontSize: "14px" }}>
+      <p style={{ color: t.colors.textMuted, margin: "0 0 28px 0", fontSize: "14px" }}>
         Configure Pulseback behaviour
       </p>
 
       {loading && (
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading…</div>
       )}
 
       {!loading && (
         <form onSubmit={handleSave}>
-          <div style={{ ...cardStyle, maxWidth: "560px" }}>
+          <div style={{ ...s.card, maxWidth: "560px" }}>
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>DNS Upstream Server</label>
+              <label style={s.label}>DNS Upstream Server</label>
               <input
                 type="text"
-                style={inputStyle}
+                style={s.input}
                 placeholder="e.g. 8.8.8.8"
                 value={config.dnsUpstream ?? ""}
                 onChange={(e) => update("dnsUpstream", e.target.value)}
@@ -113,10 +110,10 @@ export function ServerSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Watched Folder Path</label>
+              <label style={s.label}>Watched Folder Path</label>
               <input
                 type="text"
-                style={inputStyle}
+                style={s.input}
                 placeholder="e.g. /var/kodak/photos"
                 value={config.watchedFolder ?? ""}
                 onChange={(e) => update("watchedFolder", e.target.value)}
@@ -124,7 +121,7 @@ export function ServerSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Log Level</label>
+              <label style={s.label}>Log Level</label>
               <select
                 style={selectStyle}
                 value={config.logLevel ?? "info"}
@@ -138,10 +135,10 @@ export function ServerSettings() {
             </div>
 
             <div style={fieldGroupStyle}>
-              <label style={labelStyle}>Polling Period (seconds)</label>
+              <label style={s.label}>Polling Period (seconds)</label>
               <input
                 type="number"
-                style={inputStyle}
+                style={s.input}
                 min={1}
                 max={3600}
                 value={config.pollingPeriod ?? 30}
@@ -154,11 +151,11 @@ export function ServerSettings() {
                 style={{
                   marginBottom: "16px",
                   padding: "10px 14px",
-                  borderRadius: "8px",
+                  borderRadius: t.borderRadius,
                   fontSize: "14px",
-                  background: message.type === "success" ? "rgba(74,124,89,0.1)" : "rgba(192,57,43,0.1)",
-                  color: message.type === "success" ? colors.success : colors.danger,
-                  border: `1px solid ${message.type === "success" ? colors.success : colors.danger}`,
+                  background: message.type === "success" ? `${t.colors.success}1A` : `${t.colors.danger}1A`,
+                  color: message.type === "success" ? t.colors.success : t.colors.danger,
+                  border: `1px solid ${message.type === "success" ? t.colors.success : t.colors.danger}`,
                 }}
               >
                 {message.text}
@@ -167,7 +164,7 @@ export function ServerSettings() {
 
             <button
               type="submit"
-              style={{ ...buttonStyle, opacity: saving ? 0.7 : 1 }}
+              style={{ ...s.button, opacity: saving ? 0.7 : 1 }}
               disabled={saving}
             >
               {saving ? "Saving…" : "Save Settings"}

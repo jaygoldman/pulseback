@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import { colors, fonts, cardStyle, buttonStyle, inputStyle, labelStyle } from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 export function SetupWizard() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -52,20 +56,74 @@ export function SetupWizard() {
     }
   };
 
+  const pageStyle: React.CSSProperties = {
+    minHeight: "100vh",
+    background: t.colors.background,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "24px",
+    fontFamily: t.fonts.body,
+  };
+
+  const headerStyle: React.CSSProperties = {
+    background: `linear-gradient(135deg, ${t.colors.gradientStart} 0%, ${t.colors.gradientEnd} 100%)`,
+    padding: "28px 32px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "4px",
+  };
+
+  const logoTextStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "36px",
+    fontWeight: 700,
+    color: "white",
+    letterSpacing: "6px",
+    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "22px",
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+  };
+
+  const descStyle: React.CSSProperties = {
+    fontFamily: t.fonts.body,
+    fontSize: "13px",
+    color: t.colors.textMuted,
+    margin: "0 0 24px 0",
+    lineHeight: 1.5,
+  };
+
+  const errorStyle: React.CSSProperties = {
+    background: `${t.colors.danger}1A`,
+    border: `1px solid ${t.colors.danger}`,
+    borderRadius: t.borderRadius,
+    color: t.colors.danger,
+    fontFamily: t.fonts.body,
+    fontSize: "13px",
+    padding: "10px 14px",
+    marginBottom: "16px",
+  };
+
   if (checkingStatus) {
     return (
       <div style={pageStyle}>
-        <p style={{ color: colors.mediumBrown, fontFamily: fonts.body }}>Loading…</p>
+        <p style={{ color: t.colors.textMuted, fontFamily: t.fonts.body }}>Loading…</p>
       </div>
     );
   }
 
   return (
     <div style={pageStyle}>
-      <div style={{ ...cardStyle, width: "100%", maxWidth: "420px", padding: 0, overflow: "hidden" }}>
+      <div style={{ ...s.card, width: "100%", maxWidth: "420px", padding: 0, overflow: "hidden" }}>
         {/* Kodak branded header */}
         <div style={headerStyle}>
-          <span style={logoStyle}>PULSEBACK</span>
+          <span style={logoTextStyle}>PULSEBACK</span>
         </div>
 
         <div style={{ padding: "32px" }}>
@@ -74,7 +132,7 @@ export function SetupWizard() {
 
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ marginBottom: "20px" }}>
-              <label htmlFor="username" style={labelStyle}>Username</label>
+              <label htmlFor="username" style={s.label}>Username</label>
               <input
                 id="username"
                 type="text"
@@ -83,12 +141,12 @@ export function SetupWizard() {
                 placeholder="Enter username"
                 autoComplete="username"
                 disabled={loading}
-                style={inputStyle}
+                style={s.input}
               />
             </div>
 
             <div style={{ marginBottom: "24px" }}>
-              <label htmlFor="password" style={labelStyle}>Password</label>
+              <label htmlFor="password" style={s.label}>Password</label>
               <input
                 id="password"
                 type="password"
@@ -97,7 +155,7 @@ export function SetupWizard() {
                 placeholder="Enter password"
                 autoComplete="new-password"
                 disabled={loading}
-                style={inputStyle}
+                style={s.input}
               />
             </div>
 
@@ -110,7 +168,7 @@ export function SetupWizard() {
             <button
               type="submit"
               disabled={loading}
-              style={{ ...buttonStyle, width: "100%", opacity: loading ? 0.6 : 1 }}
+              style={{ ...s.button, width: "100%", opacity: loading ? 0.6 : 1 }}
             >
               {loading ? "Creating Account…" : "Create Account"}
             </button>
@@ -120,58 +178,3 @@ export function SetupWizard() {
     </div>
   );
 }
-
-const pageStyle: React.CSSProperties = {
-  minHeight: "100vh",
-  background: colors.warmCream,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "24px",
-  fontFamily: fonts.body,
-};
-
-const headerStyle: React.CSSProperties = {
-  background: `linear-gradient(135deg, ${colors.kodakRed} 0%, #A00F27 100%)`,
-  padding: "28px 32px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: "4px",
-};
-
-const logoStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "36px",
-  fontWeight: 700,
-  color: "white",
-  letterSpacing: "6px",
-  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-};
-
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "22px",
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-};
-
-const descStyle: React.CSSProperties = {
-  fontFamily: fonts.body,
-  fontSize: "13px",
-  color: colors.mediumBrown,
-  margin: "0 0 24px 0",
-  lineHeight: 1.5,
-};
-
-const errorStyle: React.CSSProperties = {
-  background: "#FDF0EF",
-  border: `1px solid ${colors.danger}`,
-  borderRadius: "8px",
-  color: colors.danger,
-  fontFamily: fonts.body,
-  fontSize: "13px",
-  padding: "10px 14px",
-  marginBottom: "16px",
-};

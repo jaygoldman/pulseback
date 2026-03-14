@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api, setToken, setUser } from "../api";
-import { colors, fonts, cardStyle, buttonStyle, inputStyle, labelStyle } from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface LoginResponse {
   token: string;
@@ -13,6 +13,10 @@ interface LoginResponse {
 }
 
 export function Login() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -48,12 +52,81 @@ export function Login() {
     }
   };
 
+  const pageStyle: React.CSSProperties = {
+    minHeight: "100vh",
+    background: t.colors.background,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "24px",
+    fontFamily: t.fonts.body,
+  };
+
+  const headerStyle: React.CSSProperties = {
+    background: `linear-gradient(135deg, ${t.colors.gradientStart} 0%, ${t.colors.gradientEnd} 100%)`,
+    padding: "28px 32px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "4px",
+  };
+
+  const logoTextStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "36px",
+    fontWeight: 700,
+    color: "white",
+    letterSpacing: "6px",
+    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "22px",
+    color: t.colors.text,
+    margin: "0 0 8px 0",
+  };
+
+  const descStyle: React.CSSProperties = {
+    fontFamily: t.fonts.body,
+    fontSize: "13px",
+    color: t.colors.textMuted,
+    margin: "0 0 24px 0",
+    lineHeight: 1.5,
+  };
+
+  const errorStyle: React.CSSProperties = {
+    background: `${t.colors.danger}1A`,
+    border: `1px solid ${t.colors.danger}`,
+    borderRadius: t.borderRadius,
+    color: t.colors.danger,
+    fontFamily: t.fonts.body,
+    fontSize: "13px",
+    padding: "10px 14px",
+    marginBottom: "16px",
+  };
+
+  const footerStyle: React.CSSProperties = {
+    fontFamily: t.fonts.body,
+    fontSize: "13px",
+    color: t.colors.textMuted,
+    textAlign: "center" as const,
+    marginTop: "20px",
+    marginBottom: 0,
+  };
+
+  const linkStyle: React.CSSProperties = {
+    color: t.colors.primary,
+    textDecoration: "none",
+    fontWeight: 600,
+  };
+
   return (
     <div style={pageStyle}>
-      <div style={{ ...cardStyle, width: "100%", maxWidth: "420px", padding: 0, overflow: "hidden" }}>
+      <div style={{ ...s.card, width: "100%", maxWidth: "420px", padding: 0, overflow: "hidden" }}>
         {/* Kodak branded header */}
         <div style={headerStyle}>
-          <span style={logoStyle}>PULSEBACK</span>
+          <span style={logoTextStyle}>PULSEBACK</span>
         </div>
 
         <div style={{ padding: "32px" }}>
@@ -62,7 +135,7 @@ export function Login() {
 
           <form onSubmit={handleSubmit} noValidate>
             <div style={{ marginBottom: "20px" }}>
-              <label htmlFor="username" style={labelStyle}>Username</label>
+              <label htmlFor="username" style={s.label}>Username</label>
               <input
                 id="username"
                 type="text"
@@ -71,12 +144,12 @@ export function Login() {
                 placeholder="Enter username"
                 autoComplete="username"
                 disabled={loading}
-                style={inputStyle}
+                style={s.input}
               />
             </div>
 
             <div style={{ marginBottom: "24px" }}>
-              <label htmlFor="password" style={labelStyle}>Password</label>
+              <label htmlFor="password" style={s.label}>Password</label>
               <input
                 id="password"
                 type="password"
@@ -85,7 +158,7 @@ export function Login() {
                 placeholder="Enter password"
                 autoComplete="current-password"
                 disabled={loading}
-                style={inputStyle}
+                style={s.input}
               />
             </div>
 
@@ -98,7 +171,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              style={{ ...buttonStyle, width: "100%", opacity: loading ? 0.6 : 1 }}
+              style={{ ...s.button, width: "100%", opacity: loading ? 0.6 : 1 }}
             >
               {loading ? "Signing In…" : "Sign In"}
             </button>
@@ -115,73 +188,3 @@ export function Login() {
     </div>
   );
 }
-
-const pageStyle: React.CSSProperties = {
-  minHeight: "100vh",
-  background: colors.warmCream,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "24px",
-  fontFamily: fonts.body,
-};
-
-const headerStyle: React.CSSProperties = {
-  background: `linear-gradient(135deg, ${colors.kodakRed} 0%, #A00F27 100%)`,
-  padding: "28px 32px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: "4px",
-};
-
-const logoStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "36px",
-  fontWeight: 700,
-  color: "white",
-  letterSpacing: "6px",
-  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-};
-
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "22px",
-  color: colors.darkBrown,
-  margin: "0 0 8px 0",
-};
-
-const descStyle: React.CSSProperties = {
-  fontFamily: fonts.body,
-  fontSize: "13px",
-  color: colors.mediumBrown,
-  margin: "0 0 24px 0",
-  lineHeight: 1.5,
-};
-
-const errorStyle: React.CSSProperties = {
-  background: "#FDF0EF",
-  border: `1px solid ${colors.danger}`,
-  borderRadius: "8px",
-  color: colors.danger,
-  fontFamily: fonts.body,
-  fontSize: "13px",
-  padding: "10px 14px",
-  marginBottom: "16px",
-};
-
-const footerStyle: React.CSSProperties = {
-  fontFamily: fonts.body,
-  fontSize: "13px",
-  color: colors.mediumBrown,
-  textAlign: "center" as const,
-  marginTop: "20px",
-  marginBottom: 0,
-};
-
-const linkStyle: React.CSSProperties = {
-  color: colors.kodakRed,
-  textDecoration: "none",
-  fontWeight: 600,
-};

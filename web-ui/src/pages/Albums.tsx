@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { api } from "../api";
-import { colors, fonts, cardStyle, buttonStyle, buttonSecondaryStyle, inputStyle, labelStyle } from "../theme";
+import { ThemeContext, getStyles } from "../theme";
 
 interface Album {
   id: string;
@@ -8,91 +8,6 @@ interface Album {
   sortOrder: number;
   createdAt: string;
 }
-
-const pageStyle: React.CSSProperties = {
-  padding: "32px",
-  fontFamily: fonts.body,
-  color: colors.darkBrown,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "32px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: 0,
-};
-
-const headerRowStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "28px",
-};
-
-const gridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-  gap: "20px",
-};
-
-const albumCardStyle: React.CSSProperties = {
-  ...cardStyle,
-  display: "flex",
-  flexDirection: "column" as const,
-  gap: "8px",
-  position: "relative" as const,
-};
-
-const albumNameStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "20px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  marginBottom: "4px",
-};
-
-const metaStyle: React.CSSProperties = {
-  fontSize: "12px",
-  color: colors.mediumBrown,
-};
-
-const deleteButtonStyle: React.CSSProperties = {
-  ...buttonSecondaryStyle,
-  background: "transparent",
-  color: colors.danger,
-  border: `1px solid ${colors.danger}`,
-  padding: "6px 14px",
-  fontSize: "12px",
-  marginTop: "auto",
-  alignSelf: "flex-start" as const,
-};
-
-// Modal overlay
-const overlayStyle: React.CSSProperties = {
-  position: "fixed" as const,
-  inset: 0,
-  background: "rgba(61,43,31,0.45)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 200,
-};
-
-const modalStyle: React.CSSProperties = {
-  ...cardStyle,
-  width: "360px",
-  maxWidth: "90vw",
-  boxShadow: `0 8px 32px rgba(61,43,31,0.35)`,
-};
-
-const modalHeadingStyle: React.CSSProperties = {
-  fontFamily: fonts.heading,
-  fontSize: "22px",
-  fontWeight: 700,
-  color: colors.darkBrown,
-  margin: "0 0 20px 0",
-};
 
 function formatDate(ts: string): string {
   return new Date(ts).toLocaleDateString(undefined, {
@@ -103,6 +18,10 @@ function formatDate(ts: string): string {
 }
 
 export function Albums() {
+  const { theme } = useContext(ThemeContext);
+  const t = theme;
+  const s = getStyles(t);
+
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,27 +87,111 @@ export function Albums() {
     setShowModal(false);
   }
 
+  const pageStyle: React.CSSProperties = {
+    padding: "32px",
+    fontFamily: t.fonts.body,
+    color: t.colors.text,
+  };
+
+  const headingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "32px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: 0,
+  };
+
+  const headerRowStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "28px",
+  };
+
+  const gridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+    gap: "20px",
+  };
+
+  const albumCardStyle: React.CSSProperties = {
+    ...s.card,
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "8px",
+    position: "relative" as const,
+  };
+
+  const albumNameStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "20px",
+    fontWeight: 700,
+    color: t.colors.text,
+    marginBottom: "4px",
+  };
+
+  const metaStyle: React.CSSProperties = {
+    fontSize: "12px",
+    color: t.colors.textMuted,
+  };
+
+  const deleteButtonStyle: React.CSSProperties = {
+    ...s.buttonSecondary,
+    background: "transparent",
+    color: t.colors.danger,
+    border: `1px solid ${t.colors.danger}`,
+    padding: "6px 14px",
+    fontSize: "12px",
+    marginTop: "auto",
+    alignSelf: "flex-start" as const,
+  };
+
+  const overlayStyle: React.CSSProperties = {
+    position: "fixed" as const,
+    inset: 0,
+    background: `${t.colors.text}73`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 200,
+  };
+
+  const modalStyle: React.CSSProperties = {
+    ...s.card,
+    width: "360px",
+    maxWidth: "90vw",
+    boxShadow: `0 8px 32px ${t.colors.shadowDark}`,
+  };
+
+  const modalHeadingStyle: React.CSSProperties = {
+    fontFamily: t.fonts.heading,
+    fontSize: "22px",
+    fontWeight: 700,
+    color: t.colors.text,
+    margin: "0 0 20px 0",
+  };
+
   return (
     <div style={pageStyle}>
       <div style={headerRowStyle}>
         <h1 style={headingStyle}>Albums</h1>
-        <button style={buttonStyle} onClick={openModal}>
+        <button style={s.button} onClick={openModal}>
           + New Album
         </button>
       </div>
 
       {error && (
-        <div style={{ color: colors.danger, marginBottom: "16px" }}>Error: {error}</div>
+        <div style={{ color: t.colors.danger, marginBottom: "16px" }}>Error: {error}</div>
       )}
 
       {loading ? (
-        <div style={{ color: colors.mediumBrown, fontStyle: "italic" }}>Loading albums…</div>
+        <div style={{ color: t.colors.textMuted, fontStyle: "italic" }}>Loading albums…</div>
       ) : albums.length === 0 ? (
         <div
           style={{
-            ...cardStyle,
+            ...s.card,
             textAlign: "center",
-            color: colors.mediumBrown,
+            color: t.colors.textMuted,
             fontStyle: "italic",
             padding: "48px",
           }}
@@ -207,8 +210,8 @@ export function Albums() {
                   left: 0,
                   right: 0,
                   height: "4px",
-                  background: `linear-gradient(90deg, ${colors.kodakRed}, ${colors.kodakYellow})`,
-                  borderRadius: "12px 12px 0 0",
+                  background: `linear-gradient(90deg, ${t.colors.primary}, ${t.colors.secondary})`,
+                  borderRadius: `${t.cardBorderRadius} ${t.cardBorderRadius} 0 0`,
                 }}
               />
               <div style={{ paddingTop: "8px" }}>
@@ -221,12 +224,12 @@ export function Albums() {
                 style={deleteButtonStyle}
                 onClick={() => deleteAlbum(album.id, album.name)}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = colors.danger;
+                  (e.currentTarget as HTMLElement).style.background = t.colors.danger;
                   (e.currentTarget as HTMLElement).style.color = "white";
                 }}
                 onMouseLeave={e => {
                   (e.currentTarget as HTMLElement).style.background = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = colors.danger;
+                  (e.currentTarget as HTMLElement).style.color = t.colors.danger;
                 }}
               >
                 Delete
@@ -243,12 +246,12 @@ export function Albums() {
             <h2 style={modalHeadingStyle}>New Album</h2>
             <form onSubmit={createAlbum}>
               <div style={{ marginBottom: "20px" }}>
-                <label style={labelStyle} htmlFor="album-name">
+                <label style={s.label} htmlFor="album-name">
                   Album Name
                 </label>
                 <input
                   id="album-name"
-                  style={inputStyle}
+                  style={s.input}
                   type="text"
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
@@ -258,14 +261,14 @@ export function Albums() {
                 />
               </div>
               {createError && (
-                <div style={{ color: colors.danger, fontSize: "13px", marginBottom: "16px" }}>
+                <div style={{ color: t.colors.danger, fontSize: "13px", marginBottom: "16px" }}>
                   {createError}
                 </div>
               )}
               <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
                 <button
                   type="button"
-                  style={{ ...buttonSecondaryStyle, background: colors.inputBorder, color: colors.darkBrown }}
+                  style={{ ...s.buttonSecondary, background: t.colors.inputBorder, color: t.colors.text }}
                   onClick={closeModal}
                   disabled={creating}
                 >
@@ -273,7 +276,7 @@ export function Albums() {
                 </button>
                 <button
                   type="submit"
-                  style={buttonStyle}
+                  style={s.button}
                   disabled={creating || !newName.trim()}
                 >
                   {creating ? "Creating…" : "Create Album"}
