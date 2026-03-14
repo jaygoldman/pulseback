@@ -30,10 +30,10 @@ const logoAreaStyle: React.CSSProperties = {
 
 const kodakWordmarkStyle: React.CSSProperties = {
   fontFamily: fonts.heading,
-  fontSize: "28px",
+  fontSize: "22px",
   fontWeight: 700,
   color: "white",
-  letterSpacing: "3px",
+  letterSpacing: "2px",
   textTransform: "uppercase" as const,
   textShadow: "0 2px 4px rgba(0,0,0,0.3)",
   lineHeight: 1,
