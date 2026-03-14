@@ -28,10 +28,10 @@ mkdir -p "$PROJECT_DIR/data"/{photos/originals,photos/display,watch/imported,cer
 echo ""
 echo "Installing pfctl port forwarding (requires sudo)..."
 sudo tee /etc/pf.anchors/com.pulseback > /dev/null <<PFEOF
-rdr pass on lo0 proto udp from any to any port 53 -> 127.0.0.1 port 5353
+rdr pass on lo0 proto udp from any to any port 53 -> 127.0.0.1 port 5354
 rdr pass on lo0 proto tcp from any to any port 80 -> 127.0.0.1 port 8080
 rdr pass on lo0 proto tcp from any to any port 443 -> 127.0.0.1 port 8443
-rdr pass on $NET_IF proto udp from any to any port 53 -> 127.0.0.1 port 5353
+rdr pass on $NET_IF proto udp from any to any port 53 -> 127.0.0.1 port 5354
 rdr pass on $NET_IF proto tcp from any to any port 80 -> 127.0.0.1 port 8080
 rdr pass on $NET_IF proto tcp from any to any port 443 -> 127.0.0.1 port 8443
 PFEOF

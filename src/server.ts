@@ -31,7 +31,11 @@ async function main() {
     interceptedHosts: config.dns.interceptedHosts,
     upstream: config.dns.upstream,
   });
-  await dnsProxy.start();
+  try {
+    await dnsProxy.start();
+  } catch (err) {
+    logger.warn("DNS proxy failed to start — frame DNS redirection will not work, but the rest of the server will run normally", { error: String(err) });
+  }
 
   const kodakApp = express();
   kodakApp.use(createKodakRouter(config));

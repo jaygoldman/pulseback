@@ -64,11 +64,17 @@ export function createDnsProxy(options: DnsProxyOptions) {
 
   return {
     start: () =>
-      new Promise<void>((resolve) => {
+      new Promise<void>((resolve, reject) => {
         server.on("listening", () => {
           running = true;
           logger.info("DNS proxy started", { port });
           resolve();
+        });
+        server.on("error", (err: Error) => {
+          if (!running) {
+            logger.error("DNS proxy failed to start", { port, error: String(err) });
+            reject(err);
+          }
         });
         server.listen({ udp: port });
       }),

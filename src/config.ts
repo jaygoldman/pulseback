@@ -26,7 +26,7 @@ const DATA_DIR = join(process.cwd(), "data");
 
 const DEFAULTS: Config = {
   ports: {
-    dns: 5353,
+    dns: 5354,
     http: 8080,
     https: 8443,
     webUi: 3000,
