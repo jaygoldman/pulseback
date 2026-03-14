@@ -32,7 +32,7 @@ export function createWebRouter(config: Config): Router {
   const webUiBuildDir = resolve(process.cwd(), "web-ui", "dist");
   if (existsSync(webUiBuildDir)) {
     router.use(serveStatic(webUiBuildDir));
-    router.get("*", (_req, res) => {
+    router.get("{*path}", (_req, res) => {
       res.sendFile(join(webUiBuildDir, "index.html"));
     });
   }
