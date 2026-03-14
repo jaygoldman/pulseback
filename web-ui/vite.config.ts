@@ -8,6 +8,7 @@ export default defineConfig({
     proxy: {
       "/api": "http://localhost:3000",
       "/health": "http://localhost:3000",
+      "/photos": "http://localhost:8080",
     },
   },
 });
