@@ -216,7 +216,7 @@ export function Dashboard() {
     <div style={pageStyle}>
       <h1 style={headingStyle}>Dashboard</h1>
       <p style={{ color: colors.mediumBrown, margin: "0 0 28px 0", fontSize: "14px" }}>
-        Kodak Pulse Server overview
+        Pulseback overview
       </p>
 
       {loading && (

@@ -1,20 +1,20 @@
 #!/bin/bash
-# Remove Kodak Pulse Server services
+# Remove Pulseback services
 set -e
 
-echo "=== Kodak Pulse Server Uninstaller ==="
+echo "=== Pulseback Uninstaller ==="
 
 # Unload services
-launchctl unload "$HOME/Library/LaunchAgents/com.kodak-pulse.server.plist" 2>/dev/null || true
-sudo launchctl unload "/Library/LaunchDaemons/com.kodak-pulse.pfctl.plist" 2>/dev/null || true
+launchctl unload "$HOME/Library/LaunchAgents/com.pulseback.server.plist" 2>/dev/null || true
+sudo launchctl unload "/Library/LaunchDaemons/com.pulseback.pfctl.plist" 2>/dev/null || true
 
 # Remove plists
-rm -f "$HOME/Library/LaunchAgents/com.kodak-pulse.server.plist"
-sudo rm -f "/Library/LaunchDaemons/com.kodak-pulse.pfctl.plist"
+rm -f "$HOME/Library/LaunchAgents/com.pulseback.server.plist"
+sudo rm -f "/Library/LaunchDaemons/com.pulseback.pfctl.plist"
 
 # Remove pfctl anchor
-sudo pfctl -a com.kodak-pulse -F all 2>/dev/null || true
-sudo rm -f /etc/pf.anchors/com.kodak-pulse
+sudo pfctl -a com.pulseback -F all 2>/dev/null || true
+sudo rm -f /etc/pf.anchors/com.pulseback
 
 echo ""
 echo "Services removed."

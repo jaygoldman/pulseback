@@ -39,16 +39,6 @@ const kodakWordmarkStyle: React.CSSProperties = {
   lineHeight: 1,
 };
 
-const pulseServerStyle: React.CSSProperties = {
-  fontFamily: fonts.body,
-  fontSize: "11px",
-  fontWeight: 600,
-  color: "rgba(255,255,255,0.85)",
-  letterSpacing: "2px",
-  textTransform: "uppercase" as const,
-  marginTop: "4px",
-};
-
 const navContainerStyle: React.CSSProperties = {
   flex: 1,
   padding: "16px 0",
@@ -88,8 +78,7 @@ export function Layout() {
       <aside style={sidebarStyle}>
         {/* Logo area */}
         <div style={logoAreaStyle}>
-          <div style={kodakWordmarkStyle}>KODAK</div>
-          <div style={pulseServerStyle}>Pulse Server</div>
+          <div style={kodakWordmarkStyle}>PULSEBACK</div>
           {/* Decorative film perforations along bottom of logo area */}
           <div
             style={{

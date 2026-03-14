@@ -91,7 +91,7 @@ export function ServerSettings() {
     <div style={pageStyle}>
       <h1 style={headingStyle}>Server Settings</h1>
       <p style={{ color: colors.mediumBrown, margin: "0 0 28px 0", fontSize: "14px" }}>
-        Configure Kodak Pulse Server behaviour
+        Configure Pulseback behaviour
       </p>
 
       {loading && (

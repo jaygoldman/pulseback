@@ -16,7 +16,7 @@ import { ensureDefaultAlbum } from "./photos/import.js";
 async function main() {
   const config = loadConfig();
   initLogger(config.logLevel, config.dataDir);
-  logger.info("Starting Kodak Pulse Server");
+  logger.info("Starting Pulseback");
 
   initDatabase(config.dataDir);
   initJwtSecret(config.dataDir);
@@ -58,7 +58,7 @@ async function main() {
 
   startWatcher(config.watchedFolder, config.dataDir);
 
-  logger.info("Kodak Pulse Server started", { serverIp, dns: config.ports.dns, http: config.ports.http, https: config.ports.https, webUi: config.ports.webUi });
+  logger.info("Pulseback started", { serverIp, dns: config.ports.dns, http: config.ports.http, https: config.ports.https, webUi: config.ports.webUi });
 
   const shutdown = async () => {
     logger.info("Shutting down...");

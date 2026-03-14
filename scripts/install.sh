@@ -1,12 +1,12 @@
 #!/bin/bash
-# Install Kodak Pulse Server as a macOS service
+# Install Pulseback as a macOS service
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 NODE_PATH=$(which node)
 
-echo "=== Kodak Pulse Server Installer ==="
+echo "=== Pulseback Installer ==="
 echo "Project directory: $PROJECT_DIR"
 echo "Node.js: $NODE_PATH"
 
@@ -27,7 +27,7 @@ mkdir -p "$PROJECT_DIR/data"/{photos/originals,photos/display,watch/imported,cer
 # Generate pfctl anchor file with detected interface
 echo ""
 echo "Installing pfctl port forwarding (requires sudo)..."
-sudo tee /etc/pf.anchors/com.kodak-pulse > /dev/null <<PFEOF
+sudo tee /etc/pf.anchors/com.pulseback > /dev/null <<PFEOF
 rdr pass on lo0 proto udp from any to any port 53 -> 127.0.0.1 port 5353
 rdr pass on lo0 proto tcp from any to any port 80 -> 127.0.0.1 port 8080
 rdr pass on lo0 proto tcp from any to any port 443 -> 127.0.0.1 port 8443
@@ -37,16 +37,16 @@ rdr pass on $NET_IF proto tcp from any to any port 443 -> 127.0.0.1 port 8443
 PFEOF
 
 # Install pfctl plist
-PFCTL_SRC="$PROJECT_DIR/deploy/com.kodak-pulse.pfctl.plist"
-PFCTL_DEST="/Library/LaunchDaemons/com.kodak-pulse.pfctl.plist"
+PFCTL_SRC="$PROJECT_DIR/deploy/com.pulseback.pfctl.plist"
+PFCTL_DEST="/Library/LaunchDaemons/com.pulseback.pfctl.plist"
 sudo cp "$PFCTL_SRC" "$PFCTL_DEST"
 sudo chown root:wheel "$PFCTL_DEST"
 
 # Install server plist (with placeholder replacement)
 echo "Installing launchd service..."
-PLIST_DEST="$HOME/Library/LaunchAgents/com.kodak-pulse.server.plist"
+PLIST_DEST="$HOME/Library/LaunchAgents/com.pulseback.server.plist"
 sed "s|__INSTALL_DIR__|$PROJECT_DIR|g; s|__NODE_PATH__|$NODE_PATH|g" \
-  "$PROJECT_DIR/deploy/com.kodak-pulse.server.plist" > "$PLIST_DEST"
+  "$PROJECT_DIR/deploy/com.pulseback.server.plist" > "$PLIST_DEST"
 
 # Load services
 echo ""
@@ -55,7 +55,7 @@ sudo launchctl load "$PFCTL_DEST" 2>/dev/null || true
 launchctl load "$PLIST_DEST" 2>/dev/null || true
 
 echo ""
-echo "=== Installation complete! ==="
+echo "=== Pulseback installation complete! ==="
 echo ""
 echo "Web UI: http://localhost:3000"
 echo "Open the URL above to complete setup."

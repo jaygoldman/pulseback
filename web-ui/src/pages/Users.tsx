@@ -184,7 +184,7 @@ export function Users() {
         </button>
       </div>
       <p style={{ color: colors.mediumBrown, margin: "0 0 24px 0", fontSize: "14px" }}>
-        Manage who has access to the Kodak Pulse Server
+        Manage who has access to Pulseback
       </p>
 
       {/* Add user form */}

@@ -53,8 +53,7 @@ export function Login() {
       <div style={{ ...cardStyle, width: "100%", maxWidth: "420px", padding: 0, overflow: "hidden" }}>
         {/* Kodak branded header */}
         <div style={headerStyle}>
-          <span style={logoStyle}>KODAK</span>
-          <span style={subheadStyle}>Pulse Server</span>
+          <span style={logoStyle}>PULSEBACK</span>
         </div>
 
         <div style={{ padding: "32px" }}>
@@ -145,14 +144,6 @@ const logoStyle: React.CSSProperties = {
   textShadow: "0 2px 4px rgba(0,0,0,0.3)",
 };
 
-const subheadStyle: React.CSSProperties = {
-  fontFamily: fonts.body,
-  fontSize: "12px",
-  fontWeight: 500,
-  color: "rgba(255,255,255,0.8)",
-  letterSpacing: "2px",
-  textTransform: "uppercase" as const,
-};
 
 const headingStyle: React.CSSProperties = {
   fontFamily: fonts.heading,

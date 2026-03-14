@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.kodak-pulse.pfctl</string>
+    <string>com.pulseback.pfctl</string>
     <key>ProgramArguments</key>
     <array>
         <string>/bin/sh</string>
         <string>-c</string>
-        <string>pfctl -a com.kodak-pulse -f /etc/pf.anchors/com.kodak-pulse -e 2>/dev/null; true</string>
+        <string>pfctl -a com.pulseback -f /etc/pf.anchors/com.pulseback -e 2>/dev/null; true</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
