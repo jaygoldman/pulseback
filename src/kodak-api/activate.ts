@@ -3,25 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getDb } from "../db/database.js";
 import { buildXml, parseXml } from "./xml.js";
 import { logger } from "../logger.js";
-
-const DEFAULT_ALBUM_NAME = "All Photos";
-
-function ensureDefaultAlbum(): string {
-  const db = getDb();
-  let album = db.prepare("SELECT id FROM albums WHERE name = ?").get(DEFAULT_ALBUM_NAME) as { id: string } | undefined;
-  if (!album) {
-    const id = uuidv4();
-    db.prepare("INSERT INTO albums (id, name, sortOrder, createdAt) VALUES (?, ?, 0, ?)").run(id, DEFAULT_ALBUM_NAME, new Date().toISOString());
-    album = { id };
-    // Assign to all existing devices
-    const devices = db.prepare("SELECT id FROM devices").all() as { id: string }[];
-    const insert = db.prepare("INSERT OR IGNORE INTO device_albums (deviceId, albumId) VALUES (?, ?)");
-    for (const device of devices) {
-      insert.run(device.id, id);
-    }
-  }
-  return album.id;
-}
+import { ensureDefaultAlbum } from "../photos/import.js";
 
 export async function handleActivate(req: Request, res: Response): Promise<void> {
   try {

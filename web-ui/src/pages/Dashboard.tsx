@@ -97,7 +97,7 @@ export function Dashboard() {
     load();
   }, []);
 
-  const healthOk = health?.status === "ok";
+  const healthOk = health?.status === "healthy";
 
   const pageStyle: React.CSSProperties = {
     padding: "32px",

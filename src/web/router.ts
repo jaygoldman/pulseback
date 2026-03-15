@@ -28,6 +28,9 @@ export function createWebRouter(config: Config): Router {
   router.use("/api/users", usersRouter);
   router.use("/api/server-settings", createServerSettingsRouter(config));
 
+  // Serve photo display images (so they work from the web UI port too)
+  router.use("/photos", serveStatic(join(config.dataDir, "photos", "display")));
+
   // Serve React build in production
   const webUiBuildDir = resolve(process.cwd(), "web-ui", "dist");
   if (existsSync(webUiBuildDir)) {

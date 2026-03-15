@@ -24,9 +24,20 @@ export function createServerSettingsRouter(config: Config): Router {
     }
   });
 
+  const ALLOWED_CONFIG_KEYS = new Set([
+    "ports", "dns", "watchedFolder", "logLevel", "pollingPeriod",
+  ]);
+
   router.put("/", (req, res) => {
     try {
-      writeFileSync(configPath, JSON.stringify(req.body, null, 2), "utf-8");
+      // Only allow known config keys
+      const filtered: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(req.body)) {
+        if (ALLOWED_CONFIG_KEYS.has(key)) {
+          filtered[key] = value;
+        }
+      }
+      writeFileSync(configPath, JSON.stringify(filtered, null, 2), "utf-8");
       res.json({ success: true });
     } catch {
       res.status(500).json({ error: "Failed to write config" });

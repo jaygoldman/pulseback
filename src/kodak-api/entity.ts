@@ -11,7 +11,12 @@ export function createEntityHandler(config: Config) {
     const db = getDb();
 
     if (req.method === "DELETE") {
-      db.prepare("DELETE FROM album_photos WHERE photoId = ?").run(entityID);
+      const device = (req as any).device;
+      // Only delete from albums assigned to THIS device — never touch other devices' collections
+      db.prepare(
+        `DELETE FROM album_photos WHERE photoId = ? AND albumId IN
+         (SELECT albumId FROM device_albums WHERE deviceId = ?)`
+      ).run(entityID, device.id);
       notifyCollectionChange();
       res.status(200).send("");
       return;

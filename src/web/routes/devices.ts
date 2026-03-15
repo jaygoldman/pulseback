@@ -27,7 +27,7 @@ router.put("/:id", (req, res) => {
   if (name !== undefined) {
     db.prepare("UPDATE devices SET name = ? WHERE id = ?").run(name, req.params.id);
   }
-  const updated = db.prepare("SELECT id, name, macAddress, firmwareVersion, storageInfo, lastSeen, registeredAt FROM devices WHERE id = ?").get(req.params.id) as any;
+  const updated = db.prepare("SELECT id, deviceID, name, activationDate, lastSeen, storageInfo FROM devices WHERE id = ?").get(req.params.id) as any;
   res.json({
     ...updated,
     storageInfo: updated.storageInfo ? JSON.parse(updated.storageInfo) : null,
