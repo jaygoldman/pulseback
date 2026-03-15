@@ -8,7 +8,7 @@ router.use(requireAuth);
 
 router.get("/", (_req, res) => {
   const db = getDb();
-  const rows = db.prepare("SELECT id, name, macAddress, firmwareVersion, storageInfo, lastSeen, registeredAt FROM devices").all() as any[];
+  const rows = db.prepare("SELECT id, deviceID, name, activationDate, lastSeen, storageInfo FROM devices").all() as any[];
   const devices = rows.map((d) => ({
     ...d,
     storageInfo: d.storageInfo ? JSON.parse(d.storageInfo) : null,
