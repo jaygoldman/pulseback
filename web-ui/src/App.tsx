@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -11,7 +11,7 @@ import { FrameSettings } from "./pages/FrameSettings";
 import { Devices } from "./pages/Devices";
 import { Users } from "./pages/Users";
 import { ServerSettings } from "./pages/ServerSettings";
-import { ThemeContext, eras, loadEra, saveEra, type KodakEra } from "./theme";
+import { ThemeContext, eras, loadEra, saveEra, loadEraFromServer, type KodakEra } from "./theme";
 
 export default function App() {
   const [era, setEraState] = useState<KodakEra>(loadEra);
@@ -19,6 +19,13 @@ export default function App() {
   const setEra = useCallback((newEra: KodakEra) => {
     setEraState(newEra);
     saveEra(newEra);
+  }, []);
+
+  useEffect(() => {
+    loadEraFromServer().then((serverEra) => {
+      setEraState(serverEra);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const theme = eras[era];

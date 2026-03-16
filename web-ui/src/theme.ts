@@ -273,6 +273,31 @@ export function loadEra(): KodakEra {
 
 export function saveEra(era: KodakEra): void {
   localStorage.setItem(STORAGE_KEY, era);
+  const token = localStorage.getItem("kps_token");
+  if (token) {
+    fetch("/api/preferences", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ era }),
+    }).catch(() => {});
+  }
+}
+
+export async function loadEraFromServer(): Promise<KodakEra> {
+  try {
+    const res = await fetch("/api/preferences");
+    if (res.ok) {
+      const prefs = await res.json();
+      if (prefs.era && prefs.era in eras) {
+        localStorage.setItem(STORAGE_KEY, prefs.era);
+        return prefs.era as KodakEra;
+      }
+    }
+  } catch {}
+  return loadEra();
 }
 
 // ─── React Context ─────────────────────────────────────────────────
