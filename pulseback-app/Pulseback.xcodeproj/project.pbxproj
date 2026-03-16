@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0AE470520BFA3209FA6B1AC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C31D796C5364B38B6D656A7 /* Assets.xcassets */; };
+		14EE4621F89DAB2D83B6762F /* DeviceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52C9828C4B7D5ED9B6410A9 /* DeviceCardView.swift */; };
+		209E3E9125F4228B4262A74F /* ServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD696A95FAF4195777C4598 /* ServerManager.swift */; };
+		2984159A4C8A3459EF25B2FC /* PfctlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17AEBE046690DA9223C0D36 /* PfctlManager.swift */; };
+		31FDA908F2C8C6F3759533B6 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A29F722662734F76E64C010 /* MenuBarView.swift */; };
+		3666DC0D24D3749551969447 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52642C8DDB9BF57C38BC395D /* Device.swift */; };
+		3D108A2CA01167D91B0636D4 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483C167FCE9294439D449B53 /* StatusView.swift */; };
+		42F64D6FD00E07A6FED7C190 /* EraTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D46DD3D49D6F7DDA76F118 /* EraTheme.swift */; };
+		634B1FED395911A2CF47B95A /* SetupWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF29485B8A1A00E79F2575 /* SetupWizardView.swift */; };
+		6C5515B213CB17CE42E2214A /* PortDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FDDD487FBBB41D5C5865A4 /* PortDiscovery.swift */; };
+		78B876AA4C10E18E2DCF91A9 /* StatsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424B6561352D3311723296C4 /* StatsRowView.swift */; };
+		85630403B1CA294AE982C87C /* PulsebackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E1920F380227274C1E6CBC /* PulsebackApp.swift */; };
+		8BB568F46CD1068403278817 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20B98A80C9DBBD6A72D294A /* ThemeManager.swift */; };
+		963C97C28EA3A3271CA4F1F5 /* ServerStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EE75DF3CFB049EB3EF37F8 /* ServerStatus.swift */; };
+		DEA6C939B5C276F00D443760 /* LogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCA02A06471BA7C2136A47 /* LogoView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A1147F14A27A9C167EBFC93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		29EE75DF3CFB049EB3EF37F8 /* ServerStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStatus.swift; sourceTree = "<group>"; };
+		2C31D796C5364B38B6D656A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		424B6561352D3311723296C4 /* StatsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsRowView.swift; sourceTree = "<group>"; };
+		483C167FCE9294439D449B53 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
+		52642C8DDB9BF57C38BC395D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		7247D37CE7F6A80F3C7C1F29 /* Pulseback.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pulseback.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A29F722662734F76E64C010 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		94D46DD3D49D6F7DDA76F118 /* EraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraTheme.swift; sourceTree = "<group>"; };
+		B8BF29485B8A1A00E79F2575 /* SetupWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupWizardView.swift; sourceTree = "<group>"; };
+		B8DCA02A06471BA7C2136A47 /* LogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoView.swift; sourceTree = "<group>"; };
+		D1FDDD487FBBB41D5C5865A4 /* PortDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortDiscovery.swift; sourceTree = "<group>"; };
+		D52C9828C4B7D5ED9B6410A9 /* DeviceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCardView.swift; sourceTree = "<group>"; };
+		E4E1920F380227274C1E6CBC /* PulsebackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsebackApp.swift; sourceTree = "<group>"; };
+		F17AEBE046690DA9223C0D36 /* PfctlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PfctlManager.swift; sourceTree = "<group>"; };
+		F20B98A80C9DBBD6A72D294A /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		FAD696A95FAF4195777C4598 /* ServerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0DE96D25E1F49B0414D00BA0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2C31D796C5364B38B6D656A7 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		49E35D06F9A0AE9B49D66929 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7247D37CE7F6A80F3C7C1F29 /* Pulseback.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4F1D91CB5AE226980574F80B /* Pulseback */ = {
+			isa = PBXGroup;
+			children = (
+				0A1147F14A27A9C167EBFC93 /* Info.plist */,
+				F17AEBE046690DA9223C0D36 /* PfctlManager.swift */,
+				D1FDDD487FBBB41D5C5865A4 /* PortDiscovery.swift */,
+				E4E1920F380227274C1E6CBC /* PulsebackApp.swift */,
+				FAD696A95FAF4195777C4598 /* ServerManager.swift */,
+				F20B98A80C9DBBD6A72D294A /* ThemeManager.swift */,
+				E598C14AFFDA77F7FB3ADA71 /* Models */,
+				0DE96D25E1F49B0414D00BA0 /* Resources */,
+				EE5247A259D953DE9BDB2611 /* Views */,
+			);
+			path = Pulseback;
+			sourceTree = "<group>";
+		};
+		BC0D6C54BAC8C90E9F3D3C0F = {
+			isa = PBXGroup;
+			children = (
+				4F1D91CB5AE226980574F80B /* Pulseback */,
+				49E35D06F9A0AE9B49D66929 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E598C14AFFDA77F7FB3ADA71 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				52642C8DDB9BF57C38BC395D /* Device.swift */,
+				94D46DD3D49D6F7DDA76F118 /* EraTheme.swift */,
+				29EE75DF3CFB049EB3EF37F8 /* ServerStatus.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		EE5247A259D953DE9BDB2611 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D52C9828C4B7D5ED9B6410A9 /* DeviceCardView.swift */,
+				B8DCA02A06471BA7C2136A47 /* LogoView.swift */,
+				7A29F722662734F76E64C010 /* MenuBarView.swift */,
+				B8BF29485B8A1A00E79F2575 /* SetupWizardView.swift */,
+				424B6561352D3311723296C4 /* StatsRowView.swift */,
+				483C167FCE9294439D449B53 /* StatusView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A7E2783D37E18AE4A471BEB7 /* Pulseback */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 683CC00287E7117C14666702 /* Build configuration list for PBXNativeTarget "Pulseback" */;
+			buildPhases = (
+				9570A1877F2599B0D074E504 /* Sources */,
+				D93338FB93B3D1F1D1512F3E /* Resources */,
+				672DB5406B48FF8E3D2F6B8E /* Bundle Pulseback Server */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Pulseback;
+			packageProductDependencies = (
+			);
+			productName = Pulseback;
+			productReference = 7247D37CE7F6A80F3C7C1F29 /* Pulseback.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DEC62FEE40B5B9D0D13C5738 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = BE4CF337E545AF22D5502394 /* Build configuration list for PBXProject "Pulseback" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BC0D6C54BAC8C90E9F3D3C0F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A7E2783D37E18AE4A471BEB7 /* Pulseback */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D93338FB93B3D1F1D1512F3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0AE470520BFA3209FA6B1AC8 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		672DB5406B48FF8E3D2F6B8E /* Bundle Pulseback Server */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle Pulseback Server";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/bundle-server.sh\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9570A1877F2599B0D074E504 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3666DC0D24D3749551969447 /* Device.swift in Sources */,
+				14EE4621F89DAB2D83B6762F /* DeviceCardView.swift in Sources */,
+				42F64D6FD00E07A6FED7C190 /* EraTheme.swift in Sources */,
+				DEA6C939B5C276F00D443760 /* LogoView.swift in Sources */,
+				31FDA908F2C8C6F3759533B6 /* MenuBarView.swift in Sources */,
+				2984159A4C8A3459EF25B2FC /* PfctlManager.swift in Sources */,
+				6C5515B213CB17CE42E2214A /* PortDiscovery.swift in Sources */,
+				85630403B1CA294AE982C87C /* PulsebackApp.swift in Sources */,
+				209E3E9125F4228B4262A74F /* ServerManager.swift in Sources */,
+				963C97C28EA3A3271CA4F1F5 /* ServerStatus.swift in Sources */,
+				634B1FED395911A2CF47B95A /* SetupWizardView.swift in Sources */,
+				78B876AA4C10E18E2DCF91A9 /* StatsRowView.swift in Sources */,
+				3D108A2CA01167D91B0636D4 /* StatusView.swift in Sources */,
+				8BB568F46CD1068403278817 /* ThemeManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		327FE3F551F7E1CAF1A76864 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Pulseback/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = Pulseback;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4BE22963E778464DF5561346 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Pulseback.entitlements;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Pulseback/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaygoldman.pulseback;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		7DE2993726FE0E299BF8232A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Pulseback.entitlements;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Pulseback/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaygoldman.pulseback;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		AB60EBE927691DE6C3B2DD7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Pulseback/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = Pulseback;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		683CC00287E7117C14666702 /* Build configuration list for PBXNativeTarget "Pulseback" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB60EBE927691DE6C3B2DD7D /* Debug */,
+				327FE3F551F7E1CAF1A76864 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BE4CF337E545AF22D5502394 /* Build configuration list for PBXProject "Pulseback" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BE22963E778464DF5561346 /* Debug */,
+				7DE2993726FE0E299BF8232A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DEC62FEE40B5B9D0D13C5738 /* Project object */;
+}

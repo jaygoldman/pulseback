@@ -51,10 +51,11 @@ struct PulsebackApp: App {
 
             Button("Show Window") {
                 NSApp.activate(ignoringOtherApps: true)
-                if let window = NSApp.windows.first(where: { $0.title == "Pulseback" || $0.identifier?.rawValue == "main" }) {
-                    window.makeKeyAndOrderFront(nil)
-                } else {
-                    NSApp.sendAction(#selector(NSApplication.showWindow(_:)), to: nil, from: nil)
+                for window in NSApp.windows {
+                    if window.title == "Pulseback" || window.identifier?.rawValue == "main" {
+                        window.makeKeyAndOrderFront(nil)
+                        break
+                    }
                 }
             }
 

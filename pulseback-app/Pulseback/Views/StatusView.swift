@@ -93,7 +93,8 @@ struct StatusView: View {
             .padding(16)
         }
         .background(theme.sidebarBg)
-        .frame(width: 400, minHeight: 350)
+        .frame(width: 400)
+        .frame(minHeight: 350)
         .sheet(isPresented: $showingWizard) {
             SetupWizardView()
                 .environmentObject(serverManager)
