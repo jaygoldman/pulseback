@@ -3,8 +3,9 @@ import { join } from "node:path";
 import { logger } from "../logger.js";
 
 import * as migration001 from "./migrations/001-initial.js";
+import * as migration002 from "./migrations/002-preferences.js";
 
-const migrations = [migration001];
+const migrations = [migration001, migration002];
 
 let db: BetterSqlite3.Database | null = null;
 

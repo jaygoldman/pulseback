@@ -40,6 +40,6 @@ describe("database", () => {
     initDatabase(TEST_DATA_DIR);
     const db = getDb();
     const version = db.prepare("SELECT version FROM schema_version").get() as any;
-    expect(version.version).toBe(1);
+    expect(version.version).toBe(2);
   });
 });

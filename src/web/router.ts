@@ -11,6 +11,7 @@ import frameSettingsRouter from "./routes/frame-settings.js";
 import usersRouter from "./routes/users.js";
 import { createServerSettingsRouter } from "./routes/server-settings.js";
 import healthRouter from "./routes/health.js";
+import preferencesRouter from "./routes/preferences.js";
 import type { Config } from "../config.js";
 
 export function createWebRouter(config: Config): Router {
@@ -19,6 +20,7 @@ export function createWebRouter(config: Config): Router {
   router.use(json());
 
   router.use("/health", healthRouter);
+  router.use("/api/preferences", preferencesRouter);
   router.use("/api/setup", setupRouter);
   router.use("/api/auth", createAuthRouter(config));
   router.use("/api/photos", createPhotosRouter(config));
