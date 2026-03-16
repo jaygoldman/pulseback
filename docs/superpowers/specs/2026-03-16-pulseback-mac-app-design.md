@@ -41,6 +41,9 @@ pulseback-app/
 ├── Resources/
 │   ├── server/                     # Built Pulseback server (copied at build time)
 │   └── node                        # Bundled Node.js binary (fallback)
+├── PulsebackHelper/
+│   ├── main.swift                    # Privileged helper for pfctl (XPC service)
+│   └── Info.plist
 └── scripts/
     └── bundle-server.sh            # Build script to copy server into app bundle
 ```
@@ -50,6 +53,9 @@ pulseback-app/
 ```
 Pulseback.app/Contents/
   MacOS/Pulseback
+  Library/
+    LaunchServices/
+      com.jaygoldman.pulseback.helper  # Privileged helper (pfctl)
   Resources/
     server/                 # dist/ + node_modules/ + package.json
     node                    # Bundled Node.js binary
@@ -79,7 +85,7 @@ Pulseback.app/Contents/
 
 ### Port Discovery
 
-The app reads `~/Library/Application Support/Pulseback/config.json` to discover the configured web UI port (default 3000). This port is used for:
+The app reads `~/Library/Application Support/Pulseback/config.json` to discover the configured web UI port. If `config.json` does not exist (first launch), the app uses the hardcoded default port 3000. The discovered port is used for:
 - Health polling
 - "Open Admin" button URL
 - Menu bar status display
@@ -90,12 +96,14 @@ One-time setup on first launch:
 
 1. App detects `/etc/pf.anchors/com.pulseback` does not exist
 2. Shows a friendly explanation: "Pulseback needs to set up network routing so your Kodak Pulse frame can connect. This is a one-time setup that requires your admin password."
-3. Uses `AuthorizationExecuteWithPrivileges` (or `SMJobBless` for modern approach) to run a privileged helper that:
-   - Detects the active network interface (`route -n get default`)
-   - Writes `/etc/pf.anchors/com.pulseback` with port forwarding rules (53→5354, 80→8080, 443→8443)
+3. Uses `SMAppService` (macOS 13+) to register a privileged helper tool (`com.jaygoldman.pulseback.helper`). The helper is a separate executable embedded in the app bundle at `Contents/Library/LaunchServices/com.jaygoldman.pulseback.helper`. It communicates with the main app via XPC. The helper:
+   - Detects the active network interface (`route -n get default`), with fallback to `en0`
+   - Writes `/etc/pf.anchors/com.pulseback` with port forwarding rules (53→5354, 80→8080, 443→8443) for both `lo0` and the detected interface
    - Installs `/Library/LaunchDaemons/com.pulseback.pfctl.plist` to load rules at boot
-   - Loads the rules immediately
+   - Loads the rules immediately via `pfctl`
 4. On success, proceeds to start server
+
+**Network interface changes:** The pfctl rules are written for a specific interface. If the Mac switches interfaces (e.g., WiFi to Ethernet), the app detects this via `NWPathMonitor` and re-invokes the helper to update the rules. The helper is already blessed, so no additional admin prompt is needed.
 
 ## Window Design (Dashboard Style B)
 
@@ -149,7 +157,8 @@ The Mac app mirrors the 6 Kodak era themes from the web UI:
 
 - On startup, the app calls `GET /api/preferences` to fetch the current era
 - Defaults to 1970s if the server isn't running yet or no preference is set
-- When the user changes the era in the web UI, the Mac app picks it up on its next health poll (every 5 seconds)
+- The app polls `GET /api/preferences` alongside the health check every 5 seconds to pick up era changes
+- Validates the returned era against the known list; falls back to 1970s if invalid or missing
 - The Mac app does not set the era — that's done in the web UI only
 
 ## Frame Configuration Wizard
@@ -204,11 +213,12 @@ Minor additions to the existing Pulseback server:
 - Backed by a new `preferences` table: `key TEXT PRIMARY KEY, value TEXT`
 - New migration `002-preferences.ts`
 
-### 2. Data directory override
+### 2. Data directory override (prerequisite — must be implemented before the Mac app can function)
 
 - Support `KPS_DATA_DIR` environment variable in `config.ts`
-- If set, use it instead of `./data/`
+- If set, use it as the base data directory instead of `./data/`
 - Falls back to `./data/` as before (no change for existing users)
+- The Mac app depends on this to store data in `~/Library/Application Support/Pulseback/`
 
 ### 3. Device count in health endpoint
 
@@ -241,5 +251,24 @@ Minor additions to the existing Pulseback server:
 - Appcast XML hosted on GitHub Releases (or jaygoldman.com)
 - Checks for updates on launch (configurable interval)
 - Standard "An update is available" dialog with release notes
+- **Pre-update:** Sparkle's `updater(_:willInstallUpdate:)` delegate stops the Node server (SIGTERM) before replacement
 - Downloads `.dmg`, replaces app, restarts
+- **Post-update:** App launches normally, starts server with the updated bundle
 - `~/Library/Application Support/Pulseback/` data directory is preserved across updates
+- The privileged helper does not need re-blessing on app update (already registered via SMAppService)
+
+### Native Module Signing
+
+The server's `node_modules/` includes native binaries (`better-sqlite3`, `sharp`). The Xcode build phase script must:
+- Strip any existing ad-hoc signatures from `.node` binaries
+- Re-sign them with the app's Developer ID certificate
+- This is required for Apple notarization
+
+### Logging
+
+The Mac app logs to `~/Library/Logs/Pulseback/` using `os_log` (unified logging). Log categories:
+- `server` — process lifecycle, crash restarts, startup/shutdown
+- `pfctl` — privilege setup, interface detection, rule updates
+- `theme` — era sync events
+
+Viewable in Console.app filtered by "Pulseback".
