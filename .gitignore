@@ -5,3 +5,4 @@ web-ui/node_modules/
 web-ui/dist/
 *.tgz
 .DS_Store
+.superpowers/
