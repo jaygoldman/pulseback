@@ -1,0 +1,36 @@
+name: Pulseback
+options:
+  bundleIdPrefix: com.jaygoldman
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    PRODUCT_BUNDLE_IDENTIFIER: com.jaygoldman.pulseback
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_ENTITLEMENTS: Pulseback.entitlements
+    INFOPLIST_FILE: Pulseback/Info.plist
+
+targets:
+  Pulseback:
+    type: application
+    platform: macOS
+    sources:
+      - path: Pulseback
+    resources:
+      - path: Pulseback/Resources
+    settings:
+      base:
+        PRODUCT_NAME: Pulseback
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+    postBuildScripts:
+      - script: |
+          "${PROJECT_DIR}/scripts/bundle-server.sh" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app"
+        name: Bundle Pulseback Server
+        basedOnDependencyAnalysis: false
