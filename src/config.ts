@@ -22,7 +22,7 @@ export interface Config {
   pollingPeriod: number;
 }
 
-const DATA_DIR = join(process.cwd(), "data");
+const DATA_DIR = process.env.KPS_DATA_DIR ?? join(process.cwd(), "data");
 
 const DEFAULTS: Config = {
   ports: {
