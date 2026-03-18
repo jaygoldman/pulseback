@@ -12,10 +12,6 @@ struct StatusView: View {
             // Header with gradient and logo
             VStack(alignment: .leading, spacing: 4) {
                 LogoView(theme: theme)
-                Text(theme.tagline)
-                    .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.7))
-                    .italic()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
@@ -65,16 +61,39 @@ struct StatusView: View {
             Spacer(minLength: 0)
 
             // Action buttons
-            HStack(spacing: 8) {
-                Button(action: openAdmin) {
-                    Text("Open Admin")
-                        .font(.system(size: 13, weight: .semibold))
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    Button(action: toggleServer) {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(serverManager.isRunning ? Color(hex: "4ADE80") : theme.danger)
+                                .frame(width: 8, height: 8)
+                            Text(serverManager.isRunning ? "Stop Server" : "Start Server")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
                         .frame(maxWidth: .infinity, minHeight: 38)
+                    }
+                    .buttonStyle(.plain)
+                    .background(serverManager.isRunning ? theme.sidebarText.opacity(0.08) : theme.primary)
+                    .foregroundColor(serverManager.isRunning ? theme.sidebarText : .white)
+                    .cornerRadius(theme.cornerRadius)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: theme.cornerRadius)
+                            .stroke(theme.sidebarText.opacity(0.1), lineWidth: serverManager.isRunning ? 1 : 0)
+                    )
+
+                    Button(action: openAdmin) {
+                        Text("Open Admin")
+                            .font(.system(size: 13, weight: .semibold))
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                    }
+                    .buttonStyle(.plain)
+                    .background(theme.primary)
+                    .foregroundColor(.white)
+                    .cornerRadius(theme.cornerRadius)
+                    .opacity(serverManager.isRunning ? 1 : 0.5)
+                    .disabled(!serverManager.isRunning)
                 }
-                .buttonStyle(.plain)
-                .background(theme.primary)
-                .foregroundColor(.white)
-                .cornerRadius(theme.cornerRadius)
 
                 Button(action: { showingWizard = true }) {
                     Text("Configure Frame")
@@ -99,6 +118,14 @@ struct StatusView: View {
             SetupWizardView()
                 .environmentObject(serverManager)
                 .environmentObject(themeManager)
+        }
+    }
+
+    private func toggleServer() {
+        if serverManager.isRunning {
+            serverManager.stop()
+        } else {
+            serverManager.start()
         }
     }
 

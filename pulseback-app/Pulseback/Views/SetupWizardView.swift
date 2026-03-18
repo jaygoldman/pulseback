@@ -26,7 +26,8 @@ struct SetupWizardView: View {
                     var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
                     getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
                                &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST)
-                    address = String(cString: hostname)
+                    address = String(decoding: hostname.map { UInt8(bitPattern: $0) }, as: UTF8.self)
+                        .trimmingCharacters(in: .init(charactersIn: "\0"))
                     break
                 }
             }
@@ -45,22 +46,35 @@ struct SetupWizardView: View {
                 Text("Step \(step) of 5")
                     .font(.system(size: 12))
                     .foregroundColor(theme.textMuted)
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(theme.textMuted)
+                        .frame(width: 24, height: 24)
+                        .background(theme.textMuted.opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .background(theme.cardBg)
 
             Divider()
 
             // Content
-            Group {
-                switch step {
-                case 1: step1View
-                case 2: step2View
-                case 3: step3View
-                case 4: step4View
-                case 5: step5View
-                default: EmptyView()
+            ScrollView {
+                Group {
+                    switch step {
+                    case 1: step1View
+                    case 2: step2View
+                    case 3: step3View
+                    case 4: step4View
+                    case 5: step5View
+                    default: EmptyView()
+                    }
                 }
+                .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(theme.background)
@@ -98,7 +112,7 @@ struct SetupWizardView: View {
             .padding(16)
             .background(theme.cardBg)
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 500, height: 550)
         .onDisappear { pollTimer?.invalidate() }
     }
 

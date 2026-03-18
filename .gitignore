@@ -6,3 +6,5 @@ web-ui/dist/
 *.tgz
 .DS_Store
 .superpowers/
+xcuserdata/
+*.xcworkspace/xcuserdata/

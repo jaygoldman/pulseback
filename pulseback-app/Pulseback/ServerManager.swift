@@ -9,7 +9,7 @@ class ServerManager: ObservableObject {
     @Published var photoCount: Int = 0
     @Published var errorMessage: String?
 
-    private var process: Process?
+    private(set) var process: Process?
     private var healthTimer: Timer?
     private var restartCount = 0
     private let maxRestarts = 3
@@ -20,6 +20,7 @@ class ServerManager: ObservableObject {
     func start() {
         guard !isRunning else { return }
         errorMessage = nil
+        restartCount = 0
 
         let nodePath = findNode()
         guard let nodePath else {
@@ -30,7 +31,7 @@ class ServerManager: ObservableObject {
 
         let serverDir = findServerDir()
         guard let serverDir else {
-            errorMessage = "Server files not found in app bundle."
+            errorMessage = "Server files not found. Run 'npm run build' in the project root."
             logger.error("Server directory not found")
             return
         }
@@ -43,11 +44,23 @@ class ServerManager: ObservableObject {
         proc.currentDirectoryURL = serverDir
         proc.environment = ProcessInfo.processInfo.environment
         proc.environment?["KPS_DATA_DIR"] = dataDir.path
+        proc.environment?["PULSEBACK_MANAGED"] = "1"
 
-        // Pipe stdout/stderr to logs
-        let pipe = Pipe()
-        proc.standardOutput = pipe
-        proc.standardError = pipe
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        proc.standardOutput = stdoutPipe
+        proc.standardError = stderrPipe
+
+        stdoutPipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
+            let data = handle.availableData
+            guard !data.isEmpty, let line = String(data: data, encoding: .utf8) else { return }
+            self?.logger.info("server: \(line)")
+        }
+        stderrPipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
+            let data = handle.availableData
+            guard !data.isEmpty, let line = String(data: data, encoding: .utf8) else { return }
+            self?.logger.warning("server(err): \(line)")
+        }
 
         proc.terminationHandler = { [weak self] process in
             Task { @MainActor in
@@ -59,7 +72,6 @@ class ServerManager: ObservableObject {
             try proc.run()
             self.process = proc
             self.isRunning = true
-            self.restartCount = 0
             logger.info("Server started (PID: \(proc.processIdentifier))")
             startHealthPolling()
         } catch {
@@ -71,20 +83,40 @@ class ServerManager: ObservableObject {
     func stop() {
         healthTimer?.invalidate()
         healthTimer = nil
+        // Don't auto-restart after an intentional stop
+        restartCount = maxRestarts
 
         guard let proc = process, proc.isRunning else {
             isRunning = false
+            process = nil
             return
         }
 
-        logger.info("Stopping server (SIGTERM)")
-        proc.terminate()  // Sends SIGTERM
+        let pid = proc.processIdentifier
 
-        // Wait up to 5 seconds, then SIGINT
-        DispatchQueue.global().asyncAfter(deadline: .now() + 5) { [weak self] in
+        // Clean up pipe handlers
+        (proc.standardOutput as? Pipe)?.fileHandleForReading.readabilityHandler = nil
+        (proc.standardError as? Pipe)?.fileHandleForReading.readabilityHandler = nil
+
+        // Kill the entire process group so child processes are cleaned up too
+        logger.info("Stopping server process group (PID: \(pid))")
+        kill(-pid, SIGTERM)
+
+        // Wait up to 3 seconds, then force kill
+        DispatchQueue.global().async { [weak self] in
+            let deadline = Date().addingTimeInterval(3)
+            while proc.isRunning && Date() < deadline {
+                Thread.sleep(forTimeInterval: 0.1)
+            }
             if proc.isRunning {
-                proc.interrupt()  // SIGINT as fallback
-                self?.logger.warning("Server did not stop gracefully, sending SIGINT")
+                self?.logger.warning("Server did not stop gracefully, sending SIGKILL")
+                kill(-pid, SIGKILL)
+                proc.waitUntilExit()
+            }
+            Task { @MainActor in
+                self?.isRunning = false
+                self?.process = nil
+                self?.logger.info("Server stopped")
             }
         }
     }
@@ -121,16 +153,30 @@ class ServerManager: ObservableObject {
     }
 
     private func findServerDir() -> URL? {
+        let fm = FileManager.default
+
+        // 1. Dev path first: walk up from source file to find project root with node_modules
+        let devPath = URL(fileURLWithPath: #filePath)  // .../pulseback-app/Pulseback/ServerManager.swift
+            .deletingLastPathComponent()               // .../pulseback-app/Pulseback/
+            .deletingLastPathComponent()               // .../pulseback-app/
+            .deletingLastPathComponent()               // .../pulseback/ (project root)
+
+        if fm.fileExists(atPath: devPath.appendingPathComponent("dist/server.js").path) &&
+           fm.fileExists(atPath: devPath.appendingPathComponent("node_modules").path) {
+            logger.info("Using dev server: \(devPath.path)")
+            return devPath
+        }
+
+        // 2. App bundle (for production builds with bundled server + node_modules)
         if let serverPath = Bundle.main.resourceURL?.appendingPathComponent("server") {
-            if FileManager.default.fileExists(atPath: serverPath.appendingPathComponent("dist/server.js").path) {
+            if fm.fileExists(atPath: serverPath.appendingPathComponent("dist/server.js").path) &&
+               fm.fileExists(atPath: serverPath.appendingPathComponent("node_modules").path) {
+                logger.info("Using bundled server: \(serverPath.path)")
                 return serverPath
             }
         }
-        // Dev fallback: look for server in parent directory
-        let devPath = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        if FileManager.default.fileExists(atPath: devPath.appendingPathComponent("dist/server.js").path) {
-            return devPath
-        }
+
+        logger.error("Could not find dist/server.js + node_modules in any expected location")
         return nil
     }
 

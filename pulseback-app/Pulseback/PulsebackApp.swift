@@ -5,8 +5,6 @@ import os
 struct PulsebackApp: App {
     @StateObject private var serverManager = ServerManager()
     @StateObject private var themeManager = ThemeManager()
-    @State private var showingPfctlSetup = false
-    @State private var pfctlSetupComplete = false
 
     private let logger = Logger(subsystem: "com.jaygoldman.pulseback", category: "app")
 
@@ -16,47 +14,32 @@ struct PulsebackApp: App {
             StatusView()
                 .environmentObject(serverManager)
                 .environmentObject(themeManager)
-                .onAppear {
-                    startApp()
-                }
-                .alert("Network Setup Required", isPresented: $showingPfctlSetup) {
-                    Button("Set Up") {
-                        Task {
-                            let success = await PfctlManager.setup()
-                            pfctlSetupComplete = success
-                            if success {
-                                serverManager.start()
-                            }
-                        }
-                    }
-                    Button("Skip", role: .cancel) {
+                .task {
+                    // Auto-start server on first appearance
+                    if !serverManager.isRunning && serverManager.errorMessage == nil {
                         serverManager.start()
                     }
-                } message: {
-                    Text("Pulseback needs to set up network routing so your Kodak Pulse frame can connect. This is a one-time setup that requires your admin password.")
+                    // Era sync polling
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 5_000_000_000)
+                        if serverManager.isRunning {
+                            await themeManager.fetchEra(port: serverManager.port)
+                        }
+                    }
                 }
         }
-        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
 
         // Menu bar extra
         MenuBarExtra {
-            let deviceCount = serverManager.status?.connectedDevices ?? 0
-
-            Text(menuBarStatusText(deviceCount: deviceCount))
+            Text(menuBarStatusText)
                 .font(.system(size: 12))
 
             Divider()
 
             Button("Show Window") {
-                NSApp.activate(ignoringOtherApps: true)
-                for window in NSApp.windows {
-                    if window.title == "Pulseback" || window.identifier?.rawValue == "main" {
-                        window.makeKeyAndOrderFront(nil)
-                        break
-                    }
-                }
+                showMainWindow()
             }
 
             Button("Open Admin") {
@@ -67,52 +50,50 @@ struct PulsebackApp: App {
 
             Divider()
 
-            if serverManager.isRunning {
-                Button("Stop Server") { serverManager.stop() }
-            } else {
-                Button("Start Server") { serverManager.start() }
+            Button(serverManager.isRunning ? "Stop Server" : "Start Server") {
+                if serverManager.isRunning {
+                    serverManager.stop()
+                } else {
+                    serverManager.start()
+                }
             }
 
             Divider()
 
             Button("Quit Pulseback") {
                 serverManager.stop()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     NSApplication.shared.terminate(nil)
                 }
             }
         } label: {
-            Image(systemName: "p.circle.fill")
-                .symbolRenderingMode(.hierarchical)
+            Image("MenuBarIcon")
+                .renderingMode(.template)
         }
     }
 
-    private func startApp() {
-        logger.info("Pulseback launching")
-
-        // Check pfctl
-        if !PfctlManager.isConfigured {
-            showingPfctlSetup = true
-        } else {
-            serverManager.start()
-        }
-
-        // Start era sync polling
-        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-            Task { @MainActor in
-                await themeManager.fetchEra(port: serverManager.port)
+    private func showMainWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        for window in NSApp.windows {
+            if window.title == "Pulseback" || window.identifier?.rawValue == "main" {
+                window.makeKeyAndOrderFront(nil)
+                return
             }
         }
     }
 
-    private func menuBarStatusText(deviceCount: Int) -> String {
-        let serverStatus = serverManager.isRunning ? "Server Running" : "Server Stopped"
-        let deviceText: String
-        switch deviceCount {
-        case 0: deviceText = "No frames connected"
-        case 1: deviceText = "1 frame connected"
-        default: deviceText = "\(deviceCount) frames connected"
+    private var menuBarStatusText: String {
+        let deviceCount = serverManager.devices.count
+        if serverManager.isRunning {
+            let deviceText: String
+            switch deviceCount {
+            case 0: deviceText = "No frames connected"
+            case 1: deviceText = "1 frame connected"
+            default: deviceText = "\(deviceCount) frames connected"
+            }
+            return "\u{25CF} Server Running \u{2014} \(deviceText)"
+        } else {
+            return "\u{25CB} Server Stopped"
         }
-        return serverManager.isRunning ? "\u{25CF} \(serverStatus) \u{2014} \(deviceText)" : "\u{25CB} \(serverStatus)"
     }
 }
